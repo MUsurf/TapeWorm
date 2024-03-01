@@ -1,44 +1,51 @@
+import pandas as pd
+import numpy as np
 from random import randint
 from time import sleep
-from Jetson.GPIO import gpio_pin_data
-import Jetson.GPIO as GPIO
-print(f'{__file__} is running')  # Verify that program runs correctly
+from platform import machine
+if (machine() != 'x86_64'):
+    from Jetson.GPIO import gpio_pin_data
+    import Jetson.GPIO as GPIO
+    has_GPIO = True
+else:
+    has_GPIO = False
 
+# Verify that program runs correctly /! not what this does at all
+print(f'{__file__} is running')
 
-class PinObj:
-    def __init__(self, pinNum):
-        self.pinValue = pinNum
-        # Must always be between 0-100
-        self.value = 0
+# Figure out how to kill any pwm pins on a failure
 
 
 class JetsonBoard:
     def __init__(self, pins=[], frequency=24000, step_size=5):
-        # GPIO.setmode(GPIO.BOARD) # set pin numbering system
-        self.pinObjs = [PinObj(i) for i in pins]
+        if (has_GPIO):
+            GPIO.setmode(GPIO.BOARD)  # set pin numbering system
+            GPIO.setup(pins, GPIO.OUT)
+            self.pwm_pins = [GPIO.PWM(i, frequency) for i in pins]
+        # Don't think this is nessescary and can probably be deleted
+        self.pinObjs = pins
+        self.pinStates = [0 for i in pins]
         self.step_size = step_size
+        self.frequency = frequency
+        print('setup\n')
 
-        for pin in self.pinObjs:
-            # GPIO.setup(pin, GPIO.OUT)
-            print('setup\n')
-        # self.pwm_pins = [GPIO.PWM(i, frequency) for i in self.pinObjs]
-
-    # directions must be -1, 1, 0
+    # directions must be one of the following: -1, 1, 0
     def pinStep(self, targets=[]):
         directions = self.__targetDistance(targets)
         for x in range(len(directions)):
             if (directions[x] == 0):
                 continue
-            self.pinObjs[x].value = self.pinObjs[x].value + \
-                (directions[x] * self.step_size)
-            # self.pwm_pins[x].ChangeDutyCycle(self.pwm_pins[x].value)
-            print(f'{self.pinObjs[x].value}', end=' ')
+            self.pinStates[x] += directions[x] * self.step_size
+            if (has_GPIO):
+                self.pwm_pins[x].ChangeDutyCycle(self.pinStates[x])
+
+            print(f'{self.pinStates[x]}', end=' ')
         print('\n', end='')
 
     def __targetDistance(self, targets=[]):
         directions = []
         for i in range(len(targets)):
-            value = (targets[i] - self.pinObjs[i].value)
+            value = (targets[i] - self.pinStates[i])
             if (value == 0):
                 directions.append(0)
             elif (value > 0):
@@ -59,10 +66,13 @@ class JetsonBoard:
         sleep(3)
         for pin in self.pwm_pins:
             pin.ChangeDutyCycle(40)
-        sleep(3)
+        for _ in range(30):
+            sleep(.2)
         for pin in self.pwm_pins:
             pin.ChangeDutyCycle(0)
-        sleep(3)
+        for _ in range(30):
+            sleep(.2)
+        print('Armed')
 
     def cleanup(self):
         for pin in self.pwm_pins:
@@ -70,7 +80,8 @@ class JetsonBoard:
         GPIO.cleanup()
 
 
-pins = [1, 5, 10, 15]
+# pins = [33, 32, 15]
+pins = [15]
 board = JetsonBoard(pins, step_size=10)
 
 """
@@ -79,16 +90,20 @@ board = JetsonBoard(pins, step_size=10)
     max change every 100 miliseconds 10 change in duty cycle 
     10 changes in duty cycle ensures in a one second segment all values will reach where they need to be
 """
-major_step = 3
+major_step = 5
 minor_step = .2
+
+if (has_GPIO):
+    board.arming()
 
 while True:
     # if (scaler < 0):
     # board.targetDistance([scaler for i in range(len(pins))])
     try:
         sleep(major_step)
-        targets = [((int)(randint(0, 100) / 10) * 10)
+        targets = [((int)(randint(0, 60) / 10) * 10)
                    for i in range(len(pins))]
+        # targets = [60]
         for x in range(10):
             board.pinStep(targets)
             sleep(minor_step)
@@ -100,4 +115,6 @@ while True:
         print('\nramped-down\n')
         break
 
-board.cleanup()
+
+if (has_GPIO):
+    board.cleanup()

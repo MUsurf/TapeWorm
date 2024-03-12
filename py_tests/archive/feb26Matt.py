@@ -2,7 +2,6 @@ from asyncore import ExitNow
 from time import sleep
 from Jetson.GPIO import gpio_pin_data
 import Jetson.GPIO as GPIO
-print("Bitches")  # Verify that program runs correctly
 
 """
 def clear_pwm_pins(pwm_pins):

@@ -15,6 +15,8 @@ print(f'{__file__} is running')
 
 # Figure out how to kill any pwm pins on a failure
 
+# !!! This is all working as is motor on pin 15 is having range issues due to lack of calibration
+
 
 class JetsonBoard:
     def __init__(self, pins=[], frequency=24000, step_size=5):
@@ -24,12 +26,12 @@ class JetsonBoard:
             self.pwm_pins = [GPIO.PWM(i, frequency) for i in pins]
         # Don't think this is nessescary and can probably be deleted
         self.pinObjs = pins
+
         self.pinStates = [0 for i in pins]
         self.step_size = step_size
         self.frequency = frequency
         print('setup\n')
 
-    # directions must be one of the following: -1, 1, 0
     def pinStep(self, targets=[]):
         directions = self.__targetDistance(targets)
         for x in range(len(directions)):
@@ -42,6 +44,7 @@ class JetsonBoard:
             print(f'{self.pinStates[x]}', end=' ')
         print('\n', end='')
 
+    # directions must be one of the following: -1, 1, 0
     def __targetDistance(self, targets=[]):
         directions = []
         for i in range(len(targets)):
@@ -56,33 +59,36 @@ class JetsonBoard:
                 raise ValueError
         return (directions)
 
-    """
-    According to Nikola, the duty cycle must start at 0, go up below 50, and back to 0 before cycling the power to the desired rates. This is the below block. start PWM of required Duty Cycle
-    """
+    # """
+    # According to Nikola, the duty cycle must start at 0, go up below 50, and back to 0 before cycling the power to the desired rates. This is the below block. start PWM of required Duty Cycle
+    # """
 
+    # Takes exactly three seconds between each step
     def arming(self):
         for pin in self.pwm_pins:
-            pin.start(0)
-        sleep(3)
-        for pin in self.pwm_pins:
-            pin.ChangeDutyCycle(40)
-        for _ in range(30):
-            sleep(.2)
-        for pin in self.pwm_pins:
-            pin.ChangeDutyCycle(0)
-        for _ in range(30):
-            sleep(.2)
-        print('Armed')
+            # Must be a starting value of 10 this is lowest signal wich isn't brake
+            pin.start(10)
+        sleep(5)
+        # for pin in self.pwm_pins:
+        #     pin.ChangeDutyCycle(40)
+        # for _ in range(30):
+        #     sleep(.2)
+        # for pin in self.pwm_pins:
+        #     pin.ChangeDutyCycle(0)
+        # for _ in range(30):
+        #     sleep(.2)
+        # print('Armed')
 
     def cleanup(self):
+        print("cleaning")
         for pin in self.pwm_pins:
             pin.stop()
         GPIO.cleanup()
 
 
-# pins = [33, 32, 15]
-pins = [15]
-board = JetsonBoard(pins, step_size=10)
+# pins = [33, 15]
+pins = [33, 15]
+board = JetsonBoard(pins, step_size=2)
 
 """
     Create funct that takes a value and quickly moves the motor to this value
@@ -101,10 +107,10 @@ while True:
     # board.targetDistance([scaler for i in range(len(pins))])
     try:
         sleep(major_step)
-        targets = [((int)(randint(0, 60) / 10) * 10)
+        targets = [((int)(randint(10, 50) / 10) * 10)
                    for i in range(len(pins))]
         # targets = [60]
-        for x in range(10):
+        for x in range(20):
             board.pinStep(targets)
             sleep(minor_step)
         print(targets)

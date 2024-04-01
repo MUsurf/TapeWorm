@@ -15,7 +15,11 @@ print(f'{__file__} is running')
 
 # Figure out how to kill any pwm pins on a failure
 
-# !!! This is all working as is motor on pin 15 is having range issues due to lack of calibration
+# & This is all working as is motor on pin 15 is having range issues due to lack of calibration
+"""
+! Something is causing damage to the motors this will hopefully help with calibration enabled
+! so a change of 5 of duty cycle is 5 more vs the scaling that is happening now. 
+"""
 
 
 class JetsonBoard:
@@ -110,7 +114,7 @@ while True:
         targets = [((int)(randint(10, 50) / 10) * 10)
                    for i in range(len(pins))]
         # targets = [60]
-        for x in range(20):
+        for x in range(25):
             board.pinStep(targets)
             sleep(minor_step)
         print(targets)

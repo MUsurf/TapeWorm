@@ -2,8 +2,10 @@
 *.code-workspace
 /.vscode
 
-# Ignore Python Virtual Environments
+# Ignore Python Files
 *.env
+*.pyc
 
 # Keep Certain Files Local
 *DOC_NO_UP* 
+py_tests/motors/*.txt

@@ -24,8 +24,14 @@ pca.frequency = 280  # Hz
 
 class MainLoop():
     def __init__(self):
+        '''
+        main loop to control the motors
+        Initialize the motor pca channels
+        '''
         self.callback_count = 201
+        # Set the motor number (Why did they do it like this)
         self.motorNum = 8
+        # initialize each channel (the motors should have been stored in a list)
         self.motor1 = pca.channels[7]  # Correct
         self.motor2 = pca.channels[3]  # Correct
         self.motor3 = pca.channels[6]  # Correct
@@ -71,23 +77,33 @@ class MainLoop():
             message_rec.data[7], pca.frequency)
 
     def arm_seq(self):
+        '''
+        Set the motors from off to 0, 1000, 500, 1550
+        '''
+        # Set all motors to 0
         self.set_all(0)
         time.sleep(0.5)
 
+        # Set all motors to 1000
         self.set_all(1000)
         time.sleep(0.5)
 
+        # Set all motors to 500
         self.set_all(500)
         time.sleep(0.5)
 
+        # I don't know why but set to 1550
         self.set_all(1550)
   #      time.sleep(0.5) #FOR TESTING PURPOSES! REMOVE BEFORE USE!
   #      self.motor0.duty_cycle = self.microSec_to_duty(1600,pca.frequency)
 
     def set_all(self, PWM_setting):
+        # TODO: wtf is this stuff
         data = self.data_type(PWM_setting)
         print(data[0])
         print(int(pca.frequency))
+
+        # TODO: wtf is this stuff
         self.motor1.duty_cycle = self.microSec_to_duty(data[0], pca.frequency)
         self.motor2.duty_cycle = self.microSec_to_duty(data[1], pca.frequency)
         self.motor3.duty_cycle = self.microSec_to_duty(data[2], pca.frequency)
@@ -110,7 +126,9 @@ class MainLoop():
 
 if __name__ == '__main__':
     try:
+        # Create MainLoop object
         loop = MainLoop()
+        # Arm the motors
         loop.arm_seq()
         while not rospy.is_shutdown():
             rospy.Subscriber("/command", Int32MultiArray, loop.callback)

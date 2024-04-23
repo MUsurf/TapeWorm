@@ -19,8 +19,8 @@ pca.frequency = 280  # Hz
 
 
 class MotorCommand():
-    def __init__(self, local_channels: List[int], num_motors: int, step_size=5, minor_time=.1, max_val=100) -> None:
-        # info Get this from calling program
+    def __init__(self, local_channels: List[int], num_motors: int, step_size=5, minor_time=.1) -> None:
+        # info Number of motors being managed
         self.motorNum: int = num_motors
 
         # info list can only contain -1, 0, 1
@@ -30,7 +30,7 @@ class MotorCommand():
         self.step_size: int = step_size
 
         # info Set how much time to wait on arming
-        self.minor_step = minor_time
+        self.minor_step: float = minor_time
 
         # info Needed to save pin states to let outside program manage interupts when driving motors
         # info As this lets us step between power levels using duty cycle 0-100
@@ -40,9 +40,6 @@ class MotorCommand():
         # info This is done so number of motors can be changed on the fly
         self.motors: List[PCA9685.PWMChannel] = [
             pca.channels[channel] for channel in local_channels]
-
-        # info max val that can be set
-        self.max_val: int = max_val
 
     def __microSec_to_duty(self, microSec: int) -> int:
         """Convert Microsecond pulses to duty cycle
@@ -71,48 +68,7 @@ class MotorCommand():
         pwm_value: int = self.__microSec_to_duty(1000 + (speed * 10))
         self.motors[motor_idex].duty_cycle = pwm_value
 
-    def arm_seq(self) -> None:
-        """Current method of arming all motors may change with calibration"""
-
-        self.__set_all(0)
-        time.sleep(2)
-
-        self.__set_all(40)
-        time.sleep(2)
-
-        self.__set_all(50)
-        time.sleep(2)
-
-        self.__set_all(10)
-        time.sleep(2)
-
-    def clo_seq(self) -> None:
-        """Cleans up motors and is responsible for bringing them all back to zero"""
-        num_runs: int = int(self.max_val / self.step_size) + 1
-        for _ in range(num_runs):
-            self.pinStep([0 for _ in range(self.motorNum)])
-            time.sleep(.1)
-
-    # ~ This is a ros function that has not been proven to work
-    def callback(self, message_rec):
-        """Function to subscribe to driver with ros"""
-
-        print("Data received is: " + str(message_rec.data))
-        for index in range(len(message_rec)):
-            x = self.__microSec_to_duty(
-                message_rec[index])
-
-            self.motors[index].duty_cycle = x
-            print(f"type of var callback {type(x)}")
-
-    # ~ This is a ros function and has not been shown to work
-    def cut_motors(self, data) -> None:
-        if (data):
-            pass
-        else:
-            self.clo_seq()
-
-    def pinStep(self, targets=[]) -> None:
+    def pinStep(self, targets: List[int]) -> None:
         """Move pin towards target supplied
 
         Generates intermediate values and then steps pin from current state toward target.
@@ -138,6 +94,13 @@ class MotorCommand():
         self.__set_motors(self.pinStates)
 
     def __targetDistance(self, targets: List[int]) -> List[int]:
+        """Figures out wich direction to step pins
+
+        Notes
+        -----
+            This is a rough way to do this and can be reworked
+
+        """
         directions: List[int] = []
         for i in range(len(targets)):
             value: int = (targets[i] - self.pinStates[i])
@@ -151,50 +114,28 @@ class MotorCommand():
                 raise ValueError
         return (directions)
 
-    def __set_all(self, speed: int) -> None:
-        pin_targets: List[int] = [speed for _ in range(self.motorNum)]
-        for _ in range(10):
-            self.pinStep(pin_targets)
-            time.sleep(self.minor_step)
-
     def __set_motors(self, speeds: List[int]) -> None:
+        """Sets pins to values given by speed position"""
+
         for index in range(self.motorNum):
             self.set_motor_speed(index, speeds[index])
 
+    # ~ This is a ros function that has not been proven to work
+    def callback(self, message_rec):
+        """Function to subscribe to driver with ros"""
 
-if __name__ == '__main__':
-    local_channels: List[int] = [0, 1, 2, 3]
-    num_motors = 4  # This was set to zero before and causing problems
-    # Setup
-    try:
-        loop = MotorCommand(local_channels, num_motors, step_size=1)
-        loop.arm_seq()
-        print("done arming")
-        time.sleep(3)
+        print("Data received is: " + str(message_rec.data))
+        for index in range(len(message_rec)):
+            x = self.__microSec_to_duty(
+                message_rec[index])
 
-        # Driver
-        # ! These are place holders for arbit values to hold
-        high: List[int] = [55 for i in range(num_motors)]
-        low: List[int] = [15 for i in range(num_motors)]
-        mid: List[int] = [30 for i in range(num_motors)]
+            self.motors[index].duty_cycle = x
+            print(f"type of var callback {type(x)}")
 
-        # notes
-
-        while True:
-            print("low")
-            for x in range(10):
-                loop.pinStep(low)
-                time.sleep(loop.minor_step)
-            time.sleep(7)
-            print("mid")
-            for x in range(10):
-                loop.pinStep(mid)
-                time.sleep(loop.minor_step)
-            time.sleep(7)
-            print("high")
-            for x in range(10):
-                loop.pinStep(high)
-                time.sleep(loop.minor_step)
-            time.sleep(7)
-    except KeyboardInterrupt:
-        loop.clo_seq()
+    # ~ This is a ros function and has not been shown to work
+    # ! This should no longer be used as close is a
+    # def cut_motors(self, data):
+    #     if (data):
+    #         pass
+    #     else:
+    #         self.clo_seq()

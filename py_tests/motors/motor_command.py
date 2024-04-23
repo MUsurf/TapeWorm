@@ -15,8 +15,6 @@ pca = PCA9685.PCA9685(i2c, address=0x40)
 pca.frequency = 280  # Hz
 # END SETUP
 
-# ! This is completly working now
-
 
 class MotorCommand():
     def __init__(self, local_channels: List[int], num_motors: int, step_size=5, minor_time=.1) -> None:
@@ -131,11 +129,3 @@ class MotorCommand():
 
             self.motors[index].duty_cycle = x
             print(f"type of var callback {type(x)}")
-
-    # ~ This is a ros function and has not been shown to work
-    # ! This should no longer be used as close is a
-    # def cut_motors(self, data):
-    #     if (data):
-    #         pass
-    #     else:
-    #         self.clo_seq()

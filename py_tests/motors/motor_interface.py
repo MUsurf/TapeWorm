@@ -4,7 +4,7 @@ import time
 
 
 class MotorInterface():
-    def __init__(self, channels: List[int], numMotors: int, offset: int, max_val: int, minor_time: float, step_size: int) -> None:
+    def __init__(self, channels: List[int], numMotors: int, offset: int, max_val: int, minor_time: float, step_size: int, steps_used=10) -> None:
         # info Number of motors
         self.numMotors: int = numMotors
         # info This is the amount of time between steps
@@ -15,6 +15,8 @@ class MotorInterface():
         self.max_val: int = max_val
         # info max steps to go from one extreme to the other
         self.max_steps_needed: int = int(self.max_val / step_size)
+        # info This is the amount of steps used assuming motors don't need to reach value
+        self.steps_used: int = steps_used
         # info This is the instance of motorcommand that will be used
         self.motor_commander = MotorCommand(
             channels, self.numMotors, step_size, self.minor_time)
@@ -35,7 +37,7 @@ class MotorInterface():
         ]
 
         for targets in target_speeds:
-            for _ in range(10):
+            for _ in range(self.max_steps_needed):
                 self.motor_commander.pinStep(targets)
                 time.sleep(self.minor_time)
 
@@ -53,40 +55,42 @@ class MotorInterface():
         duty: int = int(((percent / 100) * range) + self.offset)
         return duty
 
-    # Percent drive
-    # [right, left, forward, back, up, down]
-    def direction_to_motor(self, directions):
-        # up words facing 1-4
-        # forward-left
-        # Forward
-        print("hell")
+    def calling_function(self, directions) -> None:
+        """Used to step motors to each target given"""
 
-        # Setting up MotorCommand move this to motor interface for higher level access
-local_channels: List[int] = [0, 1, 2, 3]
-num_motors = 4
+        duty_directions: List[int] = self.direction_to_motor(directions)
+        for _ in range(self.steps_used):
+            self.motor_commander.pinStep(duty_directions)
+            time.sleep(self.minor_time)
+
+    def direction_to_motor(self, directions) -> List[int]:
+        """This function will have some of the direction to motor commands
+
+        Notes
+        -----
+            This function is not implemented yet and only contains the translation from percent drive of commands to duty cycle
+        """
+
+        drive_in_duty: list[int] = []
+        for p_direction in directions:
+            drive_in_duty.append(self.__percent_to_duty(p_direction))
+        return (drive_in_duty)
+
 
 try:
-    motor_commander = MotorCommand(local_channels, num_motors, step_size=1)
+    local_channels: List[int] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    num_motors: int = len(local_channels)
+    motor_caller = MotorInterface(local_channels, num_motors, 0, 100, .1, 5)
 
-    motor_commander.arm_seq()
-    print("done arming")
-    time.sleep(1)
+    high: List[int] = [50 for i in range(num_motors)]
+    low: List[int] = [70 for i in range(num_motors)]
 
-    # Driver
-    # ! These are place holders for arbit values to hold
-    high: List[int] = [25 for i in range(num_motors)]
-    low: List[int] = [35 for i in range(num_motors)]
+    motor_caller.arm_seq()
 
-    value_running: List[int] = [0 for _ in range(num_motors)]
-    value_to_set = 0
     while True:
-        print(f"current Value {value_running}")
-        for x in range(10):
-            motor_commander.pinStep(value_running)
-            time.sleep(.1)
-        value_to_set: int = value_to_set + 1
-        for index in range(num_motors):
-            value_running[index] = value_to_set
-        time.sleep(10)
+        motor_caller.calling_function(low)
+        time.sleep(5)
+        motor_caller.calling_function(high)
+        time.sleep(5)
 except KeyboardInterrupt:
-    motor_commander.clo_seq()
+    motor_caller.clo_seq()

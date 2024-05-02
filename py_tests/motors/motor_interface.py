@@ -1,6 +1,19 @@
+from std_msgs.msg import Bool
+from std_msgs.msg import Int32MultiArray
+
+
+import rospy
 from motor_command import MotorCommand
 from typing import List
 import time
+
+# Rospy nodes
+# rospy.init_node("motor_interface")
+# rate = rospy.Rate(100)
+
+
+# BEGIN STD_MSGS
+# END STD_MSGS
 
 
 class MotorInterface():
@@ -77,8 +90,9 @@ class MotorInterface():
         return (drive_in_duty)
 
 
+# Motor init codes
 try:
-    local_channels: List[int] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    local_channels: List[int] = [0, 1, 2, 3]
     num_motors: int = len(local_channels)
     motor_caller = MotorInterface(local_channels, num_motors, 0, 100, .1, 5)
 
@@ -94,3 +108,8 @@ try:
         time.sleep(5)
 except KeyboardInterrupt:
     motor_caller.clo_seq()
+
+# while not rospy.is_shutdown():
+#     rospy.Subscriber("/command",Int32MultiArray,loop.callback)
+#     # rospy.Subscriber("volt_low", Bool, loop.cut_motors)
+#     rospy.spin()

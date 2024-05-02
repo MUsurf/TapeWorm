@@ -8,4 +8,5 @@
 
 # Keep Certain Files Local
 *DOC_NO_UP* 
-py_tests/motors/*.txt
+py_tests/motors/*/*.txt
+py_tests/motors/Text Files/Aden_Project.txt

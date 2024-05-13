@@ -44,8 +44,8 @@ class MotorInterface():
 
         target_speeds: List[List[int]] = [
             [0 for _ in range(self.numMotors)],
-            [40 for _ in range(self.numMotors)],
-            [50 for _ in range(self.numMotors)],
+            [20 for _ in range(self.numMotors)],
+            [30 for _ in range(self.numMotors)],
             [10 for _ in range(self.numMotors)]
         ]
 
@@ -92,15 +92,16 @@ class MotorInterface():
 
 # Motor init codes
 try:
-    local_channels: List[int] = [0, 1, 2, 3]
+    local_channels: List[int] = [x for x in range(8)]
     num_motors: int = len(local_channels)
     motor_caller = MotorInterface(local_channels, num_motors, 0, 100, .1, 5)
 
-    high: List[int] = [50 for i in range(num_motors)]
-    low: List[int] = [70 for i in range(num_motors)]
+    high: List[int] = [20 for i in range(num_motors)]
+    low: List[int] = [30 for i in range(num_motors)]
 
+    print("arming")
     motor_caller.arm_seq()
-
+    print("done arming")
     while True:
         motor_caller.calling_function(low)
         time.sleep(5)

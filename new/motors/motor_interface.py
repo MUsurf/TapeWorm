@@ -1,25 +1,15 @@
-#!/usr/bin/env python3
-
-# BEGIN IMPORT
-import rospy
-import busio
+# import rospy
 from motor_command import MotorCommand
 from typing import List
 import time
-from board import SCL_1, SDA_1
-import adafruit_pca9685 as PCA9685
-# END IMPORT
 
 # Rospy nodes
-rospy.init_node("motor_interface")
-rate = rospy.Rate(100)
+# rospy.init_node("motor_interface")
+# rate = rospy.Rate(100)
 
 
 # BEGIN STD_MSGS
-from std_msgs.msg import Int32MultiArray
-# from std_msgs.msg import Bool
 # END STD_MSGS
-
 
 
 class MotorInterface():
@@ -94,11 +84,6 @@ class MotorInterface():
         for p_direction in directions:
             drive_in_duty.append(self.__percent_to_duty(p_direction))
         return (drive_in_duty)
-    
-    def callback(self, message_rec):
-        print("Data received is: " + str(message_rec.data))
-        self.calling_function(message_rec.data)
-
 
 
 # Motor init codes
@@ -113,19 +98,11 @@ try:
     print("arming")
     motor_caller.arm_seq()
     print("done arming")
-
-    while not rospy.is_shutdown():
-        rospy.Subscriber("/command", Int32MultiArray, motor_caller.callback)
-        # rospy.Subscriber("volt_low", Bool, loop.cut_motors)
-        rospy.spin()
-
-
-
-    # while True:
-    #     motor_caller.calling_function(low)
-    #     time.sleep(5)
-    #     motor_caller.calling_function(high)
-    #     time.sleep(5)
+    while True:
+        motor_caller.calling_function(low)
+        time.sleep(5)
+        motor_caller.calling_function(high)
+        time.sleep(5)
 except KeyboardInterrupt:
     motor_caller.clo_seq()
 

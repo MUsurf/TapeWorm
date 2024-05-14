@@ -21,7 +21,6 @@ from std_msgs.msg import Int32MultiArray
 # END STD_MSGS
 
 
-
 class MotorInterface():
     def __init__(self, channels: List[int], numMotors: int, offset: int, max_val: int, minor_time: float, step_size: int, steps_used=10) -> None:
         # info Number of motors
@@ -94,11 +93,6 @@ class MotorInterface():
         for p_direction in directions:
             drive_in_duty.append(self.__percent_to_duty(p_direction))
         return (drive_in_duty)
-    
-    def callback(self, message_rec):
-        print("Data received is: " + str(message_rec.data))
-        self.calling_function(message_rec.data)
-
 
 
 # Motor init codes
@@ -113,23 +107,17 @@ try:
     print("arming")
     motor_caller.arm_seq()
     print("done arming")
-
     while not rospy.is_shutdown():
-        rospy.Subscriber("/command", Int32MultiArray, motor_caller.callback)
+        rospy.Subscriber("/command",Int32MultiArray,loop.callback)
         # rospy.Subscriber("volt_low", Bool, loop.cut_motors)
         rospy.spin()
 
-
-
-    # while True:
-    #     motor_caller.calling_function(low)
-    #     time.sleep(5)
-    #     motor_caller.calling_function(high)
-    #     time.sleep(5)
+    while True:
+        motor_caller.calling_function(low)
+        time.sleep(5)
+        motor_caller.calling_function(high)
+        time.sleep(5)
 except KeyboardInterrupt:
     motor_caller.clo_seq()
 
-# while not rospy.is_shutdown():
-#     rospy.Subscriber("/command",Int32MultiArray,loop.callback)
-#     # rospy.Subscriber("volt_low", Bool, loop.cut_motors)
-#     rospy.spin()
+

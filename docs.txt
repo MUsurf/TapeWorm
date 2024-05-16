@@ -1,0 +1,25 @@
+Instructions to start running a project with ros
+
+Assumes:
+    Have sourced ros already
+
+cd into catkin_workspace directory
+ls should show
+catkin_workspace
+|___
+    src
+    |___
+        CMakeLists.txt
+        'package_name'/
+        |___
+            CMakeLists
+            package.xml
+            scripts/
+            |___
+                **all python files**
+
+catkin_make in catkin_workspace
+source devel/setup.bash
+rosrun 'package_name' 'python_file_name'.py
+
+    

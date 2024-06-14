@@ -3,6 +3,7 @@ import rospy
 import curses
 from std_msgs.msg import String
 
+
 class directionalOut():
     def __init__(self, x=0, y=0, z=0, pitch=0, yaw=0, roll=0):
         """
@@ -17,7 +18,7 @@ class directionalOut():
         """
         self.x = x
         self.y = y
-        self.z = z 
+        self.z = z
         self.pitch = pitch
         self.yaw = yaw
         self.roll = roll
@@ -48,6 +49,7 @@ class directionalOut():
         """
 
         return f"{self.x} {self.y} {self.z} {self.pitch} {self.yaw} {self.roll}"
+
 
 def read_key_input(screen):
     # Set the curses environment
@@ -89,20 +91,21 @@ def main():
 
     # Define the "vector" object
     directions = directionalOut()
-    
+
     # the main running loop of the ros node
     def mainloop(screen):
         while not rospy.is_shutdown():
             movement = read_key_input(screen)
             if movement is None:
                 break
-            
+
             # Update movement based on keyboard Input
             directions.updateMovement(movement)
             rate.sleep()
 
     # runs the mainloop in a curses wrapper
     curses.wrapper(mainloop)
+
 
 # Start the main thread and handle the interrupt
 if __name__ == '__main__':

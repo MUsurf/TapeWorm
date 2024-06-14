@@ -75,11 +75,11 @@ BNO055I2CNode::BNO055I2CNode(int argc, char* argv[]) {
 
     imu->init();
 
-    pub_IMUdata = nh->advertise<sensor_msgs::Imu>("data", 1);
-    pub_IMUraw = nh->advertise<sensor_msgs::Imu>("raw", 1);
-    pub_IMUmag = nh->advertise<sensor_msgs::MagneticField>("mag", 1);
-    pub_IMUtemp = nh->advertise<sensor_msgs::Temperature>("temp", 1);
-    pub_IMUstatus = nh->advertise<diagnostic_msgs::DiagnosticStatus>("status", 1);
+    pub_IMUdata = nh->advertise<sensor_msgs::Imu>("IMUdata", 1);
+    pub_IMUraw = nh->advertise<sensor_msgs::Imu>("IMUraw", 1);
+    pub_IMUmag = nh->advertise<sensor_msgs::MagneticField>("IMUmag", 1);
+    pub_IMUtemp = nh->advertise<sensor_msgs::Temperature>("IMUtemp", 1);
+    pub_IMUstatus = nh->advertise<diagnostic_msgs::DiagnosticStatus>("IMUstatus", 1);
 
     srv_reset = nh->advertiseService("reset", &BNO055I2CNode::onSrvReset, this);
 

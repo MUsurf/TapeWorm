@@ -41,11 +41,11 @@ class BNO055I2CNode {
 
         diagnostic_msgs::DiagnosticStatus current_status;
 
-        ros::Publisher pub_data;
-        ros::Publisher pub_raw;
-        ros::Publisher pub_mag;
-        ros::Publisher pub_temp;
-        ros::Publisher pub_status;
+        ros::Publisher pub_IMUdata;
+        ros::Publisher pub_IMUraw;
+        ros::Publisher pub_IMUmag;
+        ros::Publisher pub_IMUtemp;
+        ros::Publisher pub_IMUstatus;
         ros::ServiceServer srv_reset;
 
         std::unique_ptr<ros::Rate> rate;
@@ -75,11 +75,11 @@ BNO055I2CNode::BNO055I2CNode(int argc, char* argv[]) {
 
     imu->init();
 
-    pub_data = nh->advertise<sensor_msgs::Imu>("data", 1);
-    pub_raw = nh->advertise<sensor_msgs::Imu>("raw", 1);
-    pub_mag = nh->advertise<sensor_msgs::MagneticField>("mag", 1);
-    pub_temp = nh->advertise<sensor_msgs::Temperature>("temp", 1);
-    pub_status = nh->advertise<diagnostic_msgs::DiagnosticStatus>("status", 1);
+    pub_IMUdata = nh->advertise<sensor_msgs::Imu>("data", 1);
+    pub_IMUraw = nh->advertise<sensor_msgs::Imu>("raw", 1);
+    pub_IMUmag = nh->advertise<sensor_msgs::MagneticField>("mag", 1);
+    pub_IMUtemp = nh->advertise<sensor_msgs::Temperature>("temp", 1);
+    pub_IMUstatus = nh->advertise<diagnostic_msgs::DiagnosticStatus>("status", 1);
 
     srv_reset = nh->advertiseService("reset", &BNO055I2CNode::onSrvReset, this);
 
@@ -191,10 +191,10 @@ bool BNO055I2CNode::readAndPublish() {
     msg_temp.header.seq = seq;
     msg_temp.temperature = (double)record.temperature;
 
-    pub_data.publish(msg_data);
-    pub_raw.publish(msg_raw);
-    pub_mag.publish(msg_mag);
-    pub_temp.publish(msg_temp);
+    pub_IMUdata.publish(msg_data);
+    pub_IMUraw.publish(msg_raw);
+    pub_IMUmag.publish(msg_mag);
+    pub_IMUtemp.publish(msg_temp);
 
     if((seq++) % 50 == 0) {
         current_status.values[DIAG_CALIB_STAT].value = std::to_string(record.calibration_status);
@@ -203,7 +203,7 @@ bool BNO055I2CNode::readAndPublish() {
         current_status.values[DIAG_SYS_CLK_STAT].value = std::to_string(record.system_clock_status);
         current_status.values[DIAG_SYS_STAT].value = std::to_string(record.system_status);
         current_status.values[DIAG_SYS_ERR].value = std::to_string(record.system_error_code);
-        pub_status.publish(current_status);
+        pub_IMUstatus.publish(current_status);
     }
 
     return true;
@@ -211,11 +211,11 @@ bool BNO055I2CNode::readAndPublish() {
 
 void BNO055I2CNode::stop() {
     ROS_INFO("stopping");
-    if(pub_data) pub_data.shutdown();
-    if(pub_raw) pub_raw.shutdown();
-    if(pub_mag) pub_mag.shutdown();
-    if(pub_temp) pub_temp.shutdown();
-    if(pub_status) pub_status.shutdown();
+    if(pub_IMUdata) pub_IMUdata.shutdown();
+    if(pub_IMUraw) pub_IMUraw.shutdown();
+    if(pub_IMUmag) pub_IMUmag.shutdown();
+    if(pub_IMUtemp) pub_IMUtemp.shutdown();
+    if(pub_IMUstatus) pub_IMUstatus.shutdown();
     if(srv_reset) srv_reset.shutdown();
 }
 

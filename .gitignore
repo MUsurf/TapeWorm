@@ -1,0 +1,19 @@
+# Ignore VS code files
+*.code-workspace
+/.vscode
+
+# Ignore Python Files
+*.env
+*.pyc
+
+# Keep Certain Files Local
+*DOC_NO_UP* 
+py_tests/motors/*/*.txt
+py_tests/motors/Text Files/Aden_Project.txt
+
+# Ignore old python files
+archive
+
+# Ignore catkin files
+devel
+build

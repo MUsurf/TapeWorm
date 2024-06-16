@@ -10,17 +10,10 @@
 *DOC_NO_UP* 
 py_tests/motors/*/*.txt
 py_tests/motors/Text Files/Aden_Project.txt
-files
 
-# ros files to always be ignored
-.catkin_workspace
+# Ignore old python files
+archive
 
-# Catkin workspaces to keep
-py_tests
-
-# Built files to keep local
-devel/
-build/
-
-# Local Files
-catkin_ws_1213
+# Ignore catkin files
+devel
+build

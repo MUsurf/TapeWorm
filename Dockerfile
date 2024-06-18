@@ -9,6 +9,13 @@ RUN apt-get update && apt-get install -y \
     wget \
     curl \
     gnupg2 \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install ROS dependencies, including catkin
+RUN apt-get update && apt-get install -y \
+    ros-noetic-catkin \
+    ros-noetic-sensor-msgs \
     && rm -rf /var/lib/apt/lists/*
 
 # This step may not be necessary as the setup should already be in the bashrc of the base image

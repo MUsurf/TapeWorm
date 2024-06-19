@@ -1,7 +1,7 @@
 <launch>
     <include file="$(find process_imu)/launch/processing.launch"/>
 
-    <node name="imu_node" pkg="imu_bno055" type="bno055_i2c_node" output="screen">
+    <node name="bno055_node" pkg="imu_bno055" type="bno055_i2c_node" output="screen">
       <param name="device" type="string" value="/dev/i2c-8"/>
       <param name="address" type="int" value="40"/>
       <param name="frame_id" type="string" value="imu"/>

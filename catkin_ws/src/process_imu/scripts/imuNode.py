@@ -48,7 +48,7 @@ def imu_node():
     '''
 
     # Setup Node
-    rospy.init_node("imu_node", anonymous=False)
+    rospy.init_node("imu_node", anonymous=True)
     # Setup Subscriber
     rospy.Subscriber("IMUdata", Imu, imu_callback)
     # Keep the node running
@@ -59,7 +59,7 @@ def imu_node():
 if __name__ == '__main__':
     try:
         # Run the node
-        imu_subscriber()
+        imu_node()
     except rospy.ROSInterruptException:
         # Handle a ros interruption
         pass

@@ -56,7 +56,6 @@ At step 2 you should see a directory with the following structure
                 |___
                     **python files**
 
-
 ## Documentation Practices
 
 ### Catkin Modules

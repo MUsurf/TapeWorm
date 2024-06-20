@@ -1,7 +1,7 @@
 import smbus
 import time
 
-_MS5837_ADDR = 0x76
+_MS5837_ADDR = 0x28
 _MS5837_RESET = 0x1E
 
 for bus in range(0,11):

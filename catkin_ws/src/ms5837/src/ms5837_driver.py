@@ -1,5 +1,5 @@
 import rospy
-import board
+from board import SCL, SDA
 import busio
 from adafruit_bus_device.i2c_device import I2CDevice
 from time import sleep
@@ -37,7 +37,7 @@ UNITS_Kelvin     = 3
 
 class MS5837(object):
     # Registers
-    _MS5837_ADDR             = 0x76  
+    _MS5837_ADDR             = 0x28
     _MS5837_RESET            = 0x1E
     _MS5837_ADC_READ         = 0x00
     _MS5837_PROM_READ        = 0xA0
@@ -47,7 +47,8 @@ class MS5837(object):
     def __init__(self, model=MODEL_30BA, bus=1):
         self._model = model
         try:
-            self.i2c = busio.I2C(board.SCL, board.SDA)
+            self.i2c = busio.I2C(SCL, SDA)
+            print("device?")
             self.device = I2CDevice(self.i2c, self._MS5837_ADDR)
         except Exception as e:
             rospy.logerr(f"Bus {bus} is not available.")

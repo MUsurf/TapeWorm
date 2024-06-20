@@ -54,7 +54,7 @@ void BNO055I2CDriver::init() {
     }
 
     if(_i2c_smbus_read_byte_data(file, BNO055_CHIP_ID_ADDR) != BNO055_ID) {
-        throw std::runtime_error("incorrect chip ID");
+        throw std::runtime_error("Incorrect chip ID at address: " + std::to_string(BNO055_CHIP_ID_ADDR));
     }
 
     std::cerr << "rev ids:"

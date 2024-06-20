@@ -40,6 +40,8 @@ Common Problems
 
 + Check that I2C address is correct
 
++ Types for launch files are **Very important**
+
 At step 2 you should see a directory with the following structure
 
     catkin_workspace

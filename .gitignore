@@ -17,3 +17,6 @@ archive
 # Ignore catkin files
 devel
 build
+
+# Ignore documentation files to be built locally
+Generated

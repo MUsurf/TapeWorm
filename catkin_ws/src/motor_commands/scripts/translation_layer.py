@@ -9,14 +9,15 @@ from std_msgs.msg import Int32MultiArray
 
 rate = rospy.Rate(100)
 
+#! Not currently used
 
 pub = rospy.Publisher('keyboard_input', Int32MultiArray, queue_size=10)
 rospy.init_node('keyboard_input', anonymous=True)
 
 
 
-#! Assuming all motors can only drive forward
-#! When they can go backward change the allowed range of inputs not the code
+#info Assuming all motors can only drive forward
+#info When they can go backward change the allowed range of inputs not the code
 
 class Translation_Layer():
     def __init__(self, max_, min_):

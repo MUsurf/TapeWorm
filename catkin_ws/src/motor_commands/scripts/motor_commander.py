@@ -1,5 +1,17 @@
 #!/usr/bin/env python3
 
+'''
+ROS 
+
+node: motor_commander
+Publishes: 
+        motor_command
+Subscribes:
+
+Maintainer: Henry Bloch
+'''
+
+
 # BEGIN IMPORT
 import rospy
 from std_msgs.msg import Int32MultiArray

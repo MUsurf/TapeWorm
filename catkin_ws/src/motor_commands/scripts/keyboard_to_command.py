@@ -8,11 +8,11 @@ from std_msgs.msg import Int32MultiArray
 
 
 
+#! Not currently used
 
 
-
-#! Assuming all motors can only drive forward
-#! When they can go backward change the allowed range of inputs not the code
+#info Assuming all motors can only drive forward
+#info When they can go backward change the allowed range of inputs not the code
 
 class Translation_Layer():
     def __init__(self, max_, min_):

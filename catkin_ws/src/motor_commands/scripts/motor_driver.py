@@ -1,5 +1,19 @@
 #!/usr/bin/env python3
 
+
+'''
+ROS 
+
+node: motor_driver
+Publishes: 
+Subscribes:
+        motor_command
+
+Maintainer: Henry Bloch
+'''
+
+
+
 # BEGIN IMPORT
 import busio
 import time

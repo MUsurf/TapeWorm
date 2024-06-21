@@ -39,7 +39,7 @@ Common Problems
 + Python files are not executables
 
 + Check that I2C address is correct
-
++ All files should be run with python3 as the interpreter
 + Types for launch files are **Very important**
 
 At step 2 you should see a directory with the following structure

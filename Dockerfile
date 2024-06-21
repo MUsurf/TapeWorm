@@ -9,9 +9,14 @@ RUN apt-get update && apt-get install -y \
     wget \
     curl \
     gnupg2 \
+    python3 \
     python3-pip \
     screen \
+    nano \
     && rm -rf /var/lib/apt/lists/*
+
+# Ensure Python 3 is the default python version
+RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # Install ROS dependencies, including catkin
 RUN apt-get update && apt-get install -y \

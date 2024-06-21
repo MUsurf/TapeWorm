@@ -39,6 +39,6 @@ RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash && \
 # Build the ROS workspace using bash
 RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash && \
     cd /root/catkin_ws && \
-    catkin_make'
+    catkin_make' 
 
 CMD ["bash"]

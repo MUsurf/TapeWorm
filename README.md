@@ -16,8 +16,17 @@ To run you must have the Docker Engine installed an NVIDIA Jetson. This can run 
 
 To run you must use a bash terminal. For Windows you can use GitBash.
 
+#### Build the Docker Container
 `sudo bash build.sh <name>` or `./build.sh <name>`
 Replace `<name>` with the desired name of the container. The script will prompt to delete a container if an existing one is found.
+
+#### Run the Docker Container
+`sudo bash run.sh <name>` or `./run.sh <name>`
+Replace `<name>` with the desired name of the container.
+
+##### Using The Docker Container
+Instructions on how to run and launch ros nodes and scripts will be located inside run.sh,
+build.sh will use the dockerfile to create and run the container
 
 ## Running with ROS
 

@@ -1,4 +1,4 @@
-# Must be run from home directory
+# Must be run from project root directory
 
 mkdir Documentation/Generated
 destination_directory="$(pwd)/Documentation/Generated"

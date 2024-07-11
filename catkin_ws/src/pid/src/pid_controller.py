@@ -12,10 +12,14 @@ Maintainer: Henry Bloch
 
 # Begin Imports
 import time
+
 import rospy
 from pid_driver import Pid_object
+from std_msgs.msg import Int32MultiArray
 
 # End Imports
+
+#! make pids able to subscribe 
 
 class PID_controller():
     def __init__(self, ttw: int) -> None:
@@ -27,12 +31,15 @@ class PID_controller():
             time to wait until next step
         """        
 
-        self.pid_controllers: list[Pid_object] = []
+        self.pid_objects: list[Pid_object] = []
 
         self.current_values: list[float] = []
 
         self.time_counter = time.time()
         self.wait_time: int = ttw
+
+        # Ros things
+        self.publishers = []
 
     def init_pid(self, error: float, integral: float, prop: float, derivative: float, bias: float, set_point: float, current_value: float) -> int:
         """This starts a pid controller with provided settings
@@ -62,12 +69,18 @@ class PID_controller():
             Id of pid added
         """        
 
-        self.pid_controllers.append(Pid_object(error, integral, prop, derivative, bias, set_point, current_value))
-        pid_id = len(self.pid_controllers)
+        pid_id = len(self.pid_objects)
+        self.pid_objects.append(Pid_object(error, integral, prop, derivative, bias, set_point, current_value))
         return pid_id
+    
+    def init_publisher(self, publisher: rospy.Publisher) -> int:
+        publisher_id = len(self.publishers)
+        self.publishers.append(publisher)
+        return publisher_id
 
-    def __pid_step(self, pid_object: Pid_object, current_value: float) -> None:
-        pid_object.Update(current_value)
+
+    def __pid_step(self, pid_object: Pid_object, current_value: float) -> float:
+        return pid_object.Update(current_value)
 
     def step_all(self, current_values: "list[float]") -> None:
         """Update all PID objects
@@ -79,10 +92,10 @@ class PID_controller():
         current_values : list[float]
             values for the PIDs
         """
-        assert (len(current_values) == len(self.pid_controllers))
+        assert (len(current_values) == len(self.pid_objects))
 
         for counter in range(len(current_values)):
-            self.__pid_step(self.pid_controllers[counter], current_values[counter])
+            self.current_values[counter] = self.__pid_step(self.pid_objects[counter], current_values[counter])
 
     def step_one(self, current_value: float, pid_id: int) -> None:
         """Update one PID object
@@ -96,19 +109,32 @@ class PID_controller():
         pid_id : int
             pid to update
         """
-        self.__pid_step(self.pid_controllers[pid_id], current_value)
+        self.__pid_step(self.pid_objects[pid_id], current_value)
 
     def ros_update_reading(self, data, args) -> None:
         """Function to give ros for callback
 
         Parameters
         ----------
-        reading : float
-            value for next run 
-        index : int
-            _description_
+        data : _type_
+            data from ros
+        args : tuple(int)
+            contains index for pid to change
         """
         self.current_values[args[0]] = data.data
+
+    def sm_update(self, setpoint:float, index:int) -> None:
+        """Method to be called by state machine to update target parameters
+
+        Parameters
+        ----------
+        setpoint : float
+            target value for pid
+        index : int
+            pid to change
+        """
+
+        self.pid_objects[index].Update_setpoint(setpoint)
     
     def spin(self) -> None:
         """ros runner function"""
@@ -119,6 +145,21 @@ class PID_controller():
                 self.time_counter = current_time
                 self.step_all(self.current_values)
                 rospy.loginfo(self.current_values)
+    
+    def get_pid_out(self, pid_id):
+        """should only be used shortly after updating pid
+
+        Parameters
+        ----------
+        pid_id : int
+            pid of intrest
+
+        Returns
+        -------
+        float
+            current state of pid driving
+        """
+        return self.current_values[pid_id]
 
 
 
@@ -151,4 +192,10 @@ if __name__ == '__main__':
     rospy.init_node('pid_controller', anonymous=True)
 
     # Add a subscriber for each pid
-    rospy.Subscriber("example", 'example', pid_controller.ros_update_reading, (motor_pid))
+    rospy.Subscriber("example", 'example', pid_controller.ros_update_reading, (motor_pid)) # Should add a subscriber for the sensor
+
+    # Add a one publisher for each pid
+    # rospy.Publisher()
+    pub = rospy.Publisher('motor_command', Int32MultiArray, queue_size=10)
+
+    pid_controller.spin()

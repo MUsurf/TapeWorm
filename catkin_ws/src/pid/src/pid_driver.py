@@ -21,7 +21,7 @@ class Pid_object():
 
         self.prev_time: float = time.time()
     
-    def __pid_Step(self, time_delta) -> float:
+    def __pid_Step(self, time_delta: float) -> float:
         error : float = self.set_point - self.current_value
         integral : float = self.integral_prior + (error * time_delta)
         derivative : float = (error - self.error_prior) / time_delta
@@ -43,3 +43,14 @@ class Pid_object():
 
         self.prev_time = execution_time
         return self.current_value
+    
+    def Update_setpoint(self, set_point: float) -> None:
+        """Method to be called when updating target value
+
+        Parameters
+        ----------
+        set_point : float
+            target value for pid
+        """
+
+        self.set_point = set_point

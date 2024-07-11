@@ -65,9 +65,10 @@ class imuData:
         self.linear_acceleration = (data.linear_acceleration.x, data.linear_acceleration.y, data.linear_acceleration.z)
 
     def __repr__(self):
-        return (f"Orientation: {self.orientation[0]} {self.orientation[1]} {self.orientation[2]}\n"
-                f"Angular_Velocity: {self.angular_velocity[0]} {self.angular_velocity[1]} {self.angular_velocity[2]}\n"
-                f"Linear_Acceleration: {self.linear_acceleration[0]} {self.linear_acceleration[1]} {self.linear_acceleration[2]}\n")
+        # return (f"Orientation: {self.orientation[0]} {self.orientation[1]} {self.orientation[2]}\n"
+        #         f"Angular_Velocity: {self.angular_velocity[0]} {self.angular_velocity[1]} {self.angular_velocity[2]}\n"
+        #         f"Linear_Acceleration: {self.linear_acceleration[0]} {self.linear_acceleration[1]} {self.linear_acceleration[2]}\n")
+        return (f"Pitch: {self.orientation[1]} Roll: {self.orientation[0]} Yaw: {self.orientation[2]}")
 
 
 

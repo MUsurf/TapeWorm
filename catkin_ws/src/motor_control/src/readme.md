@@ -1,0 +1,1 @@
+the file motor_command is a test file

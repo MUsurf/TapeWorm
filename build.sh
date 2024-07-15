@@ -41,3 +41,7 @@ fi
 
 # Create a container from the built image
 docker run -d -it --name "$1" $RUN_OPTS jelly2
+
+docker cp catkin_ws "$1":/root/catkin_ws
+
+docker exec -it "$1" /bin/bash -c 'cd /root/catkin_ws && catkin_make'

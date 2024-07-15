@@ -15,25 +15,47 @@ from sensor_msgs.msg import Imu
 from std_msgs.msg import String
 import numpy as np
 
-def quaternion_to_euler(x, y, z, w):
-    # Roll (x-axis rotation)
-    sinr_cosp = 2 * (w * x + y * z)
-    cosr_cosp = 1 - 2 * (x * x + y * y)
-    roll = np.arctan2(sinr_cosp, cosr_cosp)
+# def quaternion_to_euler(x, y, z, w):
+#     # Roll (x-axis rotation)
+#     sinr_cosp = 2 * (w * x + y * z)
+#     cosr_cosp = 1 - 2 * (x * x + y * y)
+#     roll = np.arctan2(sinr_cosp, cosr_cosp)
 
-    # Pitch (y-axis rotation)
-    sinp = 2 * (w * y - z * x)
-    if np.abs(sinp) >= 1:
-        pitch = np.sign(sinp) * (np.pi / 2)  # Use 90 degrees if out of range
-    else:
-        pitch = np.arcsin(sinp)
+#     # Pitch (y-axis rotation)
+#     sinp = 2 * (w * y - z * x)
+#     if np.abs(sinp) >= 1:
+#         pitch = np.sign(sinp) * (np.pi / 2)  # Use 90 degrees if out of range
+#     else:
+#         pitch = np.arcsin(sinp)
 
-    # Yaw (z-axis rotation)
-    siny_cosp = 2 * (w * z + x * y)
-    cosy_cosp = 1 - 2 * (y * y + z * z)
-    yaw = np.arctan2(siny_cosp, cosy_cosp)
+#     # Yaw (z-axis rotation)
+#     siny_cosp = 2 * (w * z + x * y)
+#     cosy_cosp = 1 - 2 * (y * y + z * z)
+#     yaw = np.arctan2(siny_cosp, cosy_cosp)
 
-    return roll, pitch, yaw
+#     return roll, pitch, yaw
+
+def quaternion_to_euler(w, x, y, z):
+    ysqr = y * y
+
+    t0 = +2.0 * (w * x + y * z)
+    t1 = +1.0 - 2.0 * (x * x + ysqr)
+    X = np.degrees(np.arctan2(t0, t1))
+
+    t2 = +2.0 * (w * y - z * x)
+    t2 = np.where(t2>+1.0,+1.0,t2)
+    #t2 = +1.0 if t2 > +1.0 else t2
+
+    t2 = np.where(t2<-1.0, -1.0, t2)
+    #t2 = -1.0 if t2 < -1.0 else t2
+    Y = np.degrees(np.arcsin(t2))
+
+    t3 = +2.0 * (w * z + x * y)
+    t4 = +1.0 - 2.0 * (ysqr + z * z)
+    Z = np.degrees(np.arctan2(t3, t4))
+
+    return X, Y, Z 
+
 
 class imuData:
     def __init__(self, data):

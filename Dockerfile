@@ -30,10 +30,19 @@ RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 # Install numpy using pip
 RUN python3 -m pip install numpy
 
+# Copy the ROS workspace into the container's /root directory
+ARG CACHEBUST=1 
+COPY catkin_ws /root/catkin_ws/
+
 # Using bash to ensure the ROS environment is properly sourced
 RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash && \
     apt-get update && \
     rosdep install --from-paths /root/catkin_ws/src --ignore-src --rosdistro=noetic -y && \
     rm -rf /var/lib/apt/lists/*'
+
+# Build the ROS workspace using bash
+RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash && \
+    cd /root/catkin_ws && \
+    catkin_make' 
 
 CMD ["bash"]

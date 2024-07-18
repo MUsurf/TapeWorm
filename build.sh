@@ -30,7 +30,7 @@ if docker ps -a --format '{{.Names}}' | grep -q "^$1$"; then
 fi
 
 # Build Docker image from Dockerfile
-docker build -t jelly2 .
+docker build --build-arg CACHEBUST=$(date +%s) -t jelly2 .
 
 # Conditional parameters for Jetson GPIO access
 if [ "$IS_JETSON" == "yes" ]; then

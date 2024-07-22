@@ -30,7 +30,7 @@ if docker ps -a --format '{{.Names}}' | grep -q "^$1$"; then
 fi
 
 # Build Docker image from Dockerfile
-docker build -t jelly2 .
+docker build --build-arg CACHEBUST=$(date +%s) -t jelly2 .
 
 # Conditional parameters for Jetson GPIO access
 if [ "$IS_JETSON" == "yes" ]; then
@@ -41,3 +41,5 @@ fi
 
 # Create a container from the built image
 docker run -d -it --name "$1" $RUN_OPTS jelly2
+
+# docker exec $1 "cd /root/catkin_ws/src/state_machine && pip install -e src/ && cd /root/catkin_ws"

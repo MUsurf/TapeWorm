@@ -1,0 +1,3 @@
+<launch>
+    <node name="state_machine" pkg="state_machine" type="main.py"/>
+</launch>

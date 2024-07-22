@@ -28,28 +28,43 @@ sm = None
 #task to level the sub
 def level_1():
     """set x and y targets to 0 so that the PID will level the sub"""
-    sm.x_target = .1
-    sm.y_target = .5
+    sm.x_target = 0
+    sm.y_target = 0
 # Put milestones together to create one task (tuple)
-levelSub = (level_1)
+levelSub = (level_1, )
 
 
 ##################################################################
 # Create the list of tasks to be passed to the state machine
 task_list = {"LevelSub" : levelSub}
 
+
 def fpub():
+    """publish all current data immediately
+    """
     pub.publish(sm.pidTargetTopic())
+
 
 if __name__ == "__main__":
     # create a statemachine object using a tuple of task objects from the dictionary `task_list`
     sm = StateMachine((Task_Item(key, value) for key, value in task_list.items()))
     
-    
     # Ros setup
     rospy.init_node('state_machine', anonymous = True)
+    #Publishers
     pub = rospy.Publisher('TargetPID', String, queue_size=10)
-    # TODO: When a topic to subscribe to exists... add it here
-    # TODO: publish the information about tasks
+    #Subscribers
+    ##### Don't currently need any #####
     
-    # TODO: Specifically call on which tasks need to happen
+    
+    # This sets the proper PID controllers to 0 so that the sub will level
+    sm.Call("LevelSub")
+    fpub()
+
+
+    # This is just to keep the node from dying... I suppose I don't need to call fpub() 
+    rate = rospy.Rate(10)  # 10 Hz loop rate
+    while not rospy.is_shutdown():
+        fpub()
+        rate.sleep()
+

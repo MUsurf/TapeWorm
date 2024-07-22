@@ -50,7 +50,7 @@ class State_Machine():
             bool: True if task was successfully executed | False if task is already complete or does not exist
         """
         return False if (task := self.checkName(name)) is None else task.Execute()
-        
+        return True
     
     def checkName(self, name : str):
         """Check if a task with the given name exists.

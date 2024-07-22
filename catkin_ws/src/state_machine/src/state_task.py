@@ -4,9 +4,11 @@ Maintainer: Luke Deffenbaugh
 File does NOT use ROS directly
 '''
 from typing import Callable, Tuple
+import rospy
+
 
 class Task_Item():
-    def __init__(self, name: str, milestones: Tuple[Callable[[], None], ...]):
+    def __init__(self, name: str, milestones: tuple):
         """Initialize Task object with milestone callback functions
 
         Args:
@@ -15,9 +17,10 @@ class Task_Item():
         """
 
         self.name = name
-        self.milestones = milestones
-        self._current_milelstone = 0
-        self.status = _current_milelstone / len(self.milestones)
+        self.milestones : tuple = milestones
+        self._current_milestone = 0
+        
+        self.status = self._current_milestone / len(self.milestones)
 
     def Execute(self) -> bool:
         """ Execute the next milestone in the task
@@ -26,8 +29,8 @@ class Task_Item():
             bool: True if a milestone was completed | False if task is already complete
         """
         if self.status < 1:
-            self.milestones[self._current_milelstone]() # Execute milestone callback
-            self._current_milelstone += 1
+            self.milestones[self._current_milestone]() # Execute milestone callback
+            self._current_milestone += 1
             self.__updateStatus()
             return True
         else:
@@ -36,7 +39,7 @@ class Task_Item():
     def __updateStatus(self):
         """Update the percentage status currently completed
         """
-        self.status = self._current_milelstone / len(self.milestones)
+        self.status = self._current_milestone / len(self.milestones)
 
 
 

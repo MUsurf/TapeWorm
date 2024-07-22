@@ -39,3 +39,4 @@ docker cp catkin_ws $container_name:/root/catkin_ws
 echo Running `catkin_make` this may take a moment
 docker exec $container_name bash -c "source /opt/ros/noetic/setup.bash && cd /root/catkin_ws && catkin_make"
 
+docker exec $container_name bash -c "cd /root/catkin_ws"

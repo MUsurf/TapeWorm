@@ -41,3 +41,5 @@ fi
 
 # Create a container from the built image
 docker run -d -it --name "$1" $RUN_OPTS jelly2
+
+# docker exec $1 "cd /root/catkin_ws/src/state_machine && pip install -e src/ && cd /root/catkin_ws"

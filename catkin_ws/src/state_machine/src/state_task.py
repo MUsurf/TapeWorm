@@ -3,6 +3,7 @@ Maintainer: Luke Deffenbaugh
 
 File does NOT use ROS directly
 '''
+from typing import Callable, Tuple
 
 class Task_Item():
     def __init__(self, name: str, milestones: Tuple[Callable[[], None], ...]):
@@ -10,7 +11,7 @@ class Task_Item():
 
         Args:
             name (str): name to give the overall task
-            milestones (Tuple[Callable[[], None], ...]): tuple of callable functions to completed in sequence. (Should have no attributes and no returns)
+            milestones (tuple[Callable[[], None], ...]): tuple of callable functions to completed in sequence. (Should have no attributes and no returns)
         """
 
         self.name = name

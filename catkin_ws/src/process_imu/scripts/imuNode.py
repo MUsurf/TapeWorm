@@ -14,6 +14,7 @@ import rospy
 from sensor_msgs.msg import Imu
 from std_msgs.msg import String
 import numpy as np
+import re
 
 # def quaternion_to_euler(x, y, z, w):
 #     # Roll (x-axis rotation)
@@ -86,16 +87,16 @@ class imuData:
 
         # Transform the data into Roll Pitch and Yaw
         # euler = quaternion_to_euler(data.orientation.x, data.orientation.y, data.orientation.z, data.orientation.w)
-        x, y, z, w = data.orientation.x, data.orientation.y, data.orientation.z, data.orientation.w
+        self.x, self.y, self.z, self.w = data.orientation.x, data.orientation.y, data.orientation.z, data.orientation.w
 
         # Store the data into tuples
-        self.orientation = (-x if w < 0 else x, -y if w < 0 else y, -z if w < 0 else z)
+        self.orientation = (-1 * self.x if self.w < 0 else self.x, -1 * self.y if self.w < 0 else self.y, -1 * self.z if self.w < 0 else self.z)
         self.angular_velocity = (data.angular_velocity.x, data.angular_velocity.y, data.angular_velocity.z)
         self.linear_acceleration = (data.linear_acceleration.x, data.linear_acceleration.y, data.linear_acceleration.z)
 
     def __repr__(self):
         return (f"Orientation:[{self.orientation[0]},{self.orientation[1]},{self.orientation[2]}] "
-                f"Quaternion: [{w},{x},{y},{z}] "
+                f"Quaternion: [{self.w},{self.x},{self.y},{self.z}] "
                 f"Angular_Velocity:[{self.angular_velocity[0]},{self.angular_velocity[1]},{self.angular_velocity[2]}] "
                 f"Linear_Acceleration:[{self.linear_acceleration[0]},{self.linear_acceleration[1]},{self.linear_acceleration[2]}]")
 

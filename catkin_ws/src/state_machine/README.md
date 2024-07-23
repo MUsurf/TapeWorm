@@ -1,5 +1,4 @@
 # ROS State Machine Integration
-
 This ROS package implements a state machine in Python, designed to manage and execute tasks with ROS integration.
 
 ## Overview
@@ -38,8 +37,11 @@ The `State_Machine` class manages a collection of tasks and provides methods to 
 
 This package interacts with ROS through the `state_machine` node:
 
-- **Publishes**: [List topics for data publication, if applicable]
-- **Subscribes**: [List topics for data subscription, if applicable]
+- **Publishes**:
+  - `TargetPID`: Publishes PID target values as a `String`.
+
+- **Subscribes**:
+  - `ProcessedIMU`: Subscribes to IMU data as a `String`.
 
 ## Example Task Setup
 
@@ -47,7 +49,7 @@ To add a new task:
 
 1. Define milestone functions for the task.
 2. Create a tuple of milestone functions in the order they should be executed.
-3. Add the task to `task_list` in `tasks.py`:
+3. Add the task to `task_list` in `scripts/main.py`:
 
 ```python
 # Example task setup
@@ -65,5 +67,6 @@ example_task_milestones = (task_milestone_1, task_milestone_2)
 # Add to task_list
 task_list = {"example_task": example_task_milestones}
 ```
+<br/>
 
 **Maintainer:** Luke Deffenbaugh

@@ -27,7 +27,7 @@ class State_Machine():
         self.z_target = 0
         self.fb_target = 0
         self.lr_target = 0
-        self.ud_target = 0
+        self.depth_target = 0
 
     def pidTargetTopic(self) -> str:
         """Create the string to be sent to the topic

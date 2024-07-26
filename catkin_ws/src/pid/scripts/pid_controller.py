@@ -4,7 +4,14 @@
 ROS 
 node: pid_controller
 Publishes:
+    - pid_motor_command (10 Hz)
 Subscribes:
+    - x_pid_target
+    - y_pid_target
+    - z_pid_target
+    - fb_pid_target
+    - lr_pid_target
+    - depth_pid_target
 
 
 Maintainer: Henry Bloch
@@ -13,10 +20,11 @@ Maintainer: Henry Bloch
 # Begin Imports
 import time
 
-import rospy
-from pid_driver import Pid_object
-from std_msgs.msg import Int32MultiArray
+import rospy, sys, os
+from std_msgs.msg import Int32MultiArray, Float32, Float32MultiArray
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+from pid_driver import Pid_object
 # End Imports
 
 #! make pids able to subscribe 
@@ -71,11 +79,13 @@ class PID_controller():
 
         pid_id = len(self.pid_objects)
         self.pid_objects.append(Pid_object(error, integral, prop, derivative, bias, set_point, current_value))
+        self.current_values.append(current_value)
         return pid_id
     
-    def init_publisher(self, publisher: rospy.Publisher) -> int:
+    def init_publisher(self, topic_name: str) -> int:
         publisher_id = len(self.publishers)
-        self.publishers.append(publisher)
+        pub = rospy.Publisher(topic_name, Float32MultiArray, queue_size=10)
+        self.publishers.append(pub)
         return publisher_id
 
 
@@ -123,6 +133,7 @@ class PID_controller():
         """
         self.current_values[args[0]] = data.data
 
+
     def sm_update(self, setpoint:float, index:int) -> None:
         """Method to be called by state machine to update target parameters
 
@@ -139,13 +150,25 @@ class PID_controller():
     def spin(self) -> None:
         """ros runner function"""
 
+        rate = rospy.Rate(10)  # Set a rate for publishing (10 Hz)
+
         while not rospy.is_shutdown():
             current_time = time.time()
             if (current_time > (self.wait_time + self.time_counter)):
                 self.time_counter = current_time
                 self.step_all(self.current_values)
                 rospy.loginfo(self.current_values)
-    
+                
+                # Prepare the message to publish
+                msg = Float32MultiArray()
+                msg.data = self.current_values
+                
+                # Publish the message to the motor command topics
+                for publisher in self.publishers:
+                    publisher.publish(msg)
+
+                rate.sleep()
+        
     def get_pid_out(self, pid_id):
         """should only be used shortly after updating pid
 
@@ -164,38 +187,37 @@ class PID_controller():
 
 
 if __name__ == '__main__':
-    motor_pid = [
-        # error
-        0.0,
-        # integral
-        0.0,
-        # prop
-        0.0,
-        # derivative
-        0.0,
-        # bias
-        0.0,
-        # set_point
-        0.0,
-        # current_value
-        0.0
-    ]
+    # PID settings for each controller
+    # error, int, prop, der, bias, setpoint
+    pid_configs = {
+        'x_pid':     [0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0],
+        'y_pid':     [0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0],
+        'z_pid':     [0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0],
+        'fb_pid':    [0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0],
+        'lr_pid':    [0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0],
+        'depth_pid': [0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0]
+    }
 
-    # Start up stuff
+    # Initialize the ROS node
+    rospy.init_node('pid_controller', anonymous=True)
+    
+    # Create PID controller instance
     pid_controller = PID_controller(1)
 
-    # Start a new pid controller for each thing needing to be controlled
-    motor_pid = pid_controller.init_pid(motor_pid[0], motor_pid[1], motor_pid[2], motor_pid[3], motor_pid[4], motor_pid[5], motor_pid[6])
+    # Initialize PID controllers
+    pid_ids = {}
+    for name, config in pid_configs.items():
+        pid_id = pid_controller.init_pid(*config)
+        pid_ids[name] = pid_id
+    
+    # Create subscribers for each PID target topic
+    for name in pid_ids:
+        rospy.Subscriber(f"{name}_target", Float32, pid_controller.ros_update_reading, (pid_ids[name], ))
+
+    # Initialize publisher for motor command
+    pid_controller.init_publisher('pid_motor_command')
 
 
-    # ros stuff
-    rospy.init_node('pid_controller', anonymous=True)
-
-    # Add a subscriber for each pid
-    rospy.Subscriber("example", 'example', pid_controller.ros_update_reading, (motor_pid)) # Should add a subscriber for the sensor
-
-    # Add a one publisher for each pid
-    # rospy.Publisher()
-    pub = rospy.Publisher('motor_command', Int32MultiArray, queue_size=10)
-
+    # Start the PID controller spin
     pid_controller.spin()
+

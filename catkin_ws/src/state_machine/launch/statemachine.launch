@@ -1,4 +1,6 @@
 <launch>
     <include file="$(find imu_bno055)/launch/imu.launch"/>
+    <include file="$(find pid)/launch/pid.launch"/>
+    
     <node name="state_machine" pkg="state_machine" type="main.py"/>
 </launch>

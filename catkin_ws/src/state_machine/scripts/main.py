@@ -13,7 +13,7 @@ Maintainer: Luke Deffenbaugh
 # Temp import (time)
 import time
 
-from std_msgs.msg import String
+from std_msgs.msg import String, Float32
 import rospy, sys, os, re
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
@@ -43,8 +43,8 @@ def roll_1():
     sm.x_target = 0
 
     # allow a .05 margin of error
-    while (IMU[1] < 0.45):
-        rate.sleep()
+    # while (IMU[1] < 0.45):
+    #     rate.sleep()
     
 
 def roll_2():
@@ -53,8 +53,8 @@ def roll_2():
     sm.x_target = 0
 
     # allow a .05 margin of error (must be absolute value because it may cross 1 and then is negative)
-    while (abs(IMU[1]) < 0.95):
-        rate.sleep()
+    # while (abs(IMU[1]) < 0.95):
+    #     rate.sleep()
 
 def roll_3():
     """ Set Y to 270 degrees """
@@ -62,8 +62,8 @@ def roll_3():
     sm.x_target = 0
 
     # allow a .05 margin of error
-    while (IMU[1] < -0.55):
-        rate.sleep()
+    # while (IMU[1] < -0.55):
+    #     rate.sleep()
 
 def roll_4():
     """ Set back to level """
@@ -71,8 +71,8 @@ def roll_4():
     sm.x_target = 0
     
     # allow a .05 margin of error
-    while (IMU[1] < -.05):
-        rate.sleep()
+    # while (IMU[1] < -.05):
+    #     rate.sleep()
 
 rollSub = (roll_1, roll_2, roll_3, roll_4)
 ##################################################################
@@ -83,7 +83,12 @@ task_list = {"LevelSub" : levelSub, "RollSub" : rollSub}
 def fpub():
     """publish all current data immediately
     """
-    pub.publish(sm.pidTargetTopic())
+    x_pid_pub.publish(float(sm.x_target))
+    y_pid_pub.publish(float(sm.y_target))
+    z_pid_pub.publish(float(sm.z_target))
+    fb_pid_pub.publish(float(sm.fb_target))
+    lr_pid_pub.publish(float(sm.lr_target))
+    depth_pid_pub.publish(float(sm.depth_target))
 
 def callbackIMU(msg):
     """Simple callback function for IMU 
@@ -119,7 +124,12 @@ if __name__ == "__main__":
     # Ros setup
     rospy.init_node('state_machine', anonymous = True)
     #Publishers
-    pub = rospy.Publisher('TargetPID', String, queue_size=10)
+    x_pid_pub = rospy.Publisher('x_pid_target', Float32, queue_size=10)
+    y_pid_pub = rospy.Publisher('y_pid_target', Float32, queue_size=10)
+    z_pid_pub = rospy.Publisher('z_pid_target', Float32, queue_size=10)
+    fb_pid_pub = rospy.Publisher('fb_pid_target', Float32, queue_size=10)
+    lr_pid_pub = rospy.Publisher('lr_pid_target', Float32, queue_size=10)
+    depth_pid_pub = rospy.Publisher('depth_pid_target', Float32, queue_size=10)
     #Subscribers
     rospy.Subscriber('ProcessedIMU', String, callbackIMU)
 
@@ -132,13 +142,12 @@ if __name__ == "__main__":
     sm.Call("LevelSub")
 
     # sleep for one minute
-    time.sleep(60)
+    # time.sleep(60)
 
     # Just an example of how you might roll the sub
     sm.Call("RollSub")
 
 
-    fpub()
 
 
     # This is just to keep the node from dying... I suppose I don't need to call fpub() 

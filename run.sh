@@ -31,23 +31,30 @@ docker exec $container_name sudo screen -wipe
 sleep 2
 echo "--------------------------"
 
+# Ask user for the desired launch file
+echo "Which ROS launch file would you like to start?"
+echo "1) sm.launch"
+echo "2) sm_nomotor.launch"
+read -p "Enter the number of your choice: " choice
+
+# Determine the launch file based on user input
+case $choice in
+    1)
+        launch_file="sm.launch"
+        ;;
+    2)
+        launch_file="sm_nomotor.launch"
+        ;;
+    *)
+        echo "Invalid choice. Exiting."
+        exit 1
+        ;;
+esac
+
 ############################################################
 # Start desired screen sessions here
 
-# # Start the ROS node in another screen session
-# screen_name="imu"
-# if check_screen_session_exists $screen_name; then
-#     echo "$screen_name already exists. Quitting existing session..."
-#     docker exec $container_name sudo screen -XS $screen_name quit
-#     sleep 2
-# fi
-
-# echo "Starting ROS node with screen '$screen_name'..."
-# docker exec $container_name sudo screen -dmS $screen_name bash -c "cd ~/catkin_ws && source devel/setup.bash && roslaunch imu_bno055 imu.launch" && echo "ROS node started" || echo "Failed to start ROS node"
-# sleep 2
-# check_screen_status
-
-# Start the ROS none in another screen session
+# Start the ROS node in another screen session
 screen_name="statemachine"
 if check_screen_session_exists $screen_name; then
     echo "$screen_name already exists. Quitting existing session..."
@@ -55,8 +62,8 @@ if check_screen_session_exists $screen_name; then
     sleep 2
 fi
 
-echo "Starting ROS node with screen '$screen_name'..."
-docker exec $container_name sudo screen -dmS $screen_name bash -c "cd ~/catkin_ws && source devel/setup.bash && roslaunch state_machine statemachine.launch" && echo "ROS node started" || echo "Failed to start ROS node"
+echo "Starting ROS node with screen '$screen_name' and launch file '$launch_file'..."
+docker exec $container_name sudo screen -dmS $screen_name bash -c "cd ~/catkin_ws && source devel/setup.bash && roslaunch state_machine $launch_file" && echo "ROS node started" || echo "Failed to start ROS node"
 sleep 2
 check_screen_status
 

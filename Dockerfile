@@ -27,8 +27,8 @@ RUN apt-get update && apt-get install -y \
 # This step may not be necessary as the setup should already be in the bashrc of the base image
 RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 
-# Install numpy using pip
-RUN python3 -m pip install numpy regex
+# Install pip packages
+RUN python3 -m pip install numpy regex adafruit-blinka
 
 # Copy the ROS workspace into the container's /root directory
 ARG CACHEBUST=1 

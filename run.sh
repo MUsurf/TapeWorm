@@ -55,7 +55,7 @@ esac
 # Start desired screen sessions here
 
 # Start the ROS node in another screen session
-screen_name="statemachine"
+screen_name="Jelly2"
 if check_screen_session_exists $screen_name; then
     echo "$screen_name already exists. Quitting existing session..."
     docker exec $container_name sudo screen -XS $screen_name quit
@@ -63,7 +63,7 @@ if check_screen_session_exists $screen_name; then
 fi
 
 echo "Starting ROS node with screen '$screen_name' and launch file '$launch_file'..."
-docker exec $container_name sudo screen -dmS $screen_name bash -c "cd ~/catkin_ws && source devel/setup.bash && roslaunch state_machine $launch_file" && echo "ROS node started" || echo "Failed to start ROS node"
+docker exec $container_name sudo screen -dmS $screen_name bash -c "cd ~/catkin_ws && source devel/setup.bash && roslaunch main main.launch launch_file:=$launch_file" && echo "ROS node started" || echo "Failed to start ROS node"
 sleep 2
 check_screen_status
 

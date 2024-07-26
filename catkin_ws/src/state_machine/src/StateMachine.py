@@ -1,12 +1,12 @@
 
-    """
-    State_Machine class
-    Handles the tasks and task list
+"""
+State_Machine class
+Handles the tasks and task list
 
-    does not use ros directly
+does not use ros directly
 
-    Maintainer: Luke Deffenbaugh
-    """
+Maintainer: Luke Deffenbaugh
+"""
 
 from state_task import Task_Item
 

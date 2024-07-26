@@ -10,6 +10,8 @@ Subscribes:
 
 Maintainer: Luke Deffenbaugh
 '''
+# Temp import (time)
+import time
 
 from std_msgs.msg import String
 import rospy, sys, os, re
@@ -21,9 +23,6 @@ from state_task import Task_Item
 
 # declare it here so it can be initialized elsewhere
 sm = None
-
-# Create a rate for entering loops
-rate = rospy.rate(10)
         
 ######################### Add tasks here #########################
 
@@ -123,13 +122,17 @@ if __name__ == "__main__":
     pub = rospy.Publisher('TargetPID', String, queue_size=10)
     #Subscribers
     rospy.Subscriber('ProcessedIMU', String, callbackIMU)
+
+    
+    # Create a rate for entering loops
+    rate = rospy.Rate(10)
     
     
     # This sets the proper PID controllers to 0 so that the sub will level
     sm.Call("LevelSub")
 
     # sleep for one minute
-    sleep(60)
+    time.sleep(60)
 
     # Just an example of how you might roll the sub
     sm.Call("RollSub")

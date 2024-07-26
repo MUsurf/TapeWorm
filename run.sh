@@ -34,18 +34,18 @@ echo "--------------------------"
 ############################################################
 # Start desired screen sessions here
 
-# Start the ROS node in another screen session
-screen_name="imu"
-if check_screen_session_exists $screen_name; then
-    echo "$screen_name already exists. Quitting existing session..."
-    docker exec $container_name sudo screen -XS $screen_name quit
-    sleep 2
-fi
+# # Start the ROS node in another screen session
+# screen_name="imu"
+# if check_screen_session_exists $screen_name; then
+#     echo "$screen_name already exists. Quitting existing session..."
+#     docker exec $container_name sudo screen -XS $screen_name quit
+#     sleep 2
+# fi
 
-echo "Starting ROS node with screen '$screen_name'..."
-docker exec $container_name sudo screen -dmS $screen_name bash -c "cd ~/catkin_ws && source devel/setup.bash && roslaunch imu_bno055 imu.launch" && echo "ROS node started" || echo "Failed to start ROS node"
-sleep 2
-check_screen_status
+# echo "Starting ROS node with screen '$screen_name'..."
+# docker exec $container_name sudo screen -dmS $screen_name bash -c "cd ~/catkin_ws && source devel/setup.bash && roslaunch imu_bno055 imu.launch" && echo "ROS node started" || echo "Failed to start ROS node"
+# sleep 2
+# check_screen_status
 
 # Start the ROS none in another screen session
 screen_name="statemachine"

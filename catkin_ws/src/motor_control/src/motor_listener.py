@@ -1,3 +1,24 @@
+#!/usr/bin/env python3
+
+'''
+ROS 
+---
+
+node:
+-----
+    - motor_commander
+
+Publishes:
+----------
+
+Subscribes:
+----------
+    - motor_command
+
+'''
+
+
+
 # Begin typing imports
 from typing import List
 # End typing imports

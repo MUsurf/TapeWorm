@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
 
 '''
-ROS 
+ROS
+---
 
-node: motor_commander
-Publishes: 
-        motor_command
+node:
+----
+        - motor_commander
+
+Publishes:
+---------
+        - motor_command
+
 Subscribes:
+----------
 
 '''
 

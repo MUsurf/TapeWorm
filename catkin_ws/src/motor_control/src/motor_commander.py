@@ -4,8 +4,6 @@ from typing import List
 # End typing imports
 
 # Begin imports
-import rospy
-
 import busio
 from board import SCL, SDA
 import adafruit_pca9685 as PCA9685
@@ -16,11 +14,6 @@ i2c = busio.I2C(SCL, SDA)
 pca = PCA9685.PCA9685(i2c, address=0x28)
 pca.frequency = 280  # Hz
 # END SETUP
-
-# Rospy nodes
-rospy.init_node("motor_listener")
-rate = rospy.Rate(100)
-
 
 
 class MotorCommand():

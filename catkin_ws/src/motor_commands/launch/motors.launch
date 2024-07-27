@@ -1,4 +1,0 @@
-<launch>
-    <node name = "motor_commander_node" pkg = "motor_commands" type = "motor_commander.py"/>
-    <node name = "motor_driver_node" pkg = "motor_commands" type = "motor_driver.py"/>
-</launch>

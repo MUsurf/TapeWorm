@@ -1,28 +1,18 @@
-#!/usr/bin/env python3
-from std_msgs.msg import Bool
-from std_msgs.msg import Int32MultiArray
-from std_msgs.msg import String 
-
-
-import rospy
-from motor_command import MotorCommand
+# Begin typing imports
 from typing import List
+# End typing imports
+
+# Begin imports
+from motor_commander import MotorCommand
 import time
-
-# Rospy nodes
-# rospy.init_node("motor_interface")
-# rate = rospy.Rate(100)
-
-
-# BEGIN STD_MSGS
-# END STD_MSGS
-
-
-rospy.init_node("motor_interface")
-rospy.Subscriber("/command", Int32MultiArray, some_callback_function)  # Define the callback function
-rospy.spin()
+# End imports
 
 class MotorInterface():
+    """Handles direct control of motors
+    
+        Should be given an array of ints 
+    """
+
     def __init__(self, channels: List[int], numMotors: int, offset: int, max_val: int, minor_time: float, step_size: int, steps_used=10) -> None:
         # info Number of motors
         self.numMotors: int = numMotors
@@ -39,10 +29,6 @@ class MotorInterface():
         # info This is the instance of motorcommand that will be used
         self.motor_commander = MotorCommand(
             channels, self.numMotors, step_size, self.minor_time)
-        
-        # Setup the file as a node and declare the subscriber
-        rospy.init_node('motor_interface_node', anonymous=True)
-        self.subscriber = rospy.Subscriber('motor_commands', String, self.command_callback)
 
     def arm_seq(self) -> None:
         """Current method of arming all motors may change with calibration
@@ -54,8 +40,8 @@ class MotorInterface():
 
         target_speeds: List[List[int]] = [
             [0 for _ in range(self.numMotors)],
-            [40 for _ in range(self.numMotors)],
-            [50 for _ in range(self.numMotors)],
+            [20 for _ in range(self.numMotors)],
+            [30 for _ in range(self.numMotors)],
             [10 for _ in range(self.numMotors)]
         ]
 
@@ -98,28 +84,16 @@ class MotorInterface():
         for p_direction in directions:
             drive_in_duty.append(self.__percent_to_duty(p_direction))
         return (drive_in_duty)
-
-    def run(self):
-        rospy.spin()  # Keeps the node running to listen for messages
-
-
-# Motor init codes
-try:
-    local_channels: List[int] = [0, 1, 2, 3]
-    num_motors: int = len(local_channels)
-    motor_caller = MotorInterface(local_channels, num_motors, 0, 100, .1, 5)
-
-    high: List[int] = [50 for i in range(num_motors)]
-    low: List[int] = [70 for i in range(num_motors)]
-
-    motor_caller.arm_seq()
-
-    while True:
-        motor_caller.calling_function(low)
-        time.sleep(5)
-        motor_caller.calling_function(high)
-        time.sleep(5)
-        motor_caller.run()
     
-except KeyboardInterrupt:
-    motor_caller.clo_seq()
+
+    def callback(self, message_rec):
+        """Function to subscribe to driver with ros"""
+
+        print("Data received is: " + str(message_rec.data))
+        self.calling_function(message_rec.data)
+        # for index in range(len(message_rec)):
+        #     x = self.__microSec_to_duty(
+        #         message_rec[index])
+
+        #     self.motors[index].duty_cycle = x
+        #     print(f"type of var callback {type(x)}")

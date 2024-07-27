@@ -8,7 +8,6 @@ Publishes:
         motor_command
 Subscribes:
 
-Maintainer: Henry Bloch
 '''
 
 
@@ -33,6 +32,8 @@ def commander():
     pub = rospy.Publisher('motor_command', Int32MultiArray, queue_size=10)
     rospy.init_node('motor_commander', anonymous=True)
     rate = rospy.Rate(.1) # 10hz
+
+    #! This is just a section to show the motors running when there is seperate input from ros this should not be used
     while not rospy.is_shutdown():
         if (hl_counter == 0):
             list_thing = high

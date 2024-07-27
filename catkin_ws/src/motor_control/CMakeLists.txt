@@ -164,8 +164,9 @@ include_directories(
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
-# ADDED BY USER : LUKE => CHATGPT
-catkin_install_python(PROGRAMS scripts/motor_interface.py
+catkin_install_python(PROGRAMS
+  scripts/motor_commander.py
+  scripts/motor_driver.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

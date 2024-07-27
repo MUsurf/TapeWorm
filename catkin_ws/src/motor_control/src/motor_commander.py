@@ -1,19 +1,26 @@
-#!/usr/bin/env python3
 
-# BEGIN IMPORT
+# Begin typing imports
+from typing import List
+# End typing imports
+
+# Begin imports
+import rospy
+
 import busio
-import time
 from board import SCL, SDA
 import adafruit_pca9685 as PCA9685
-from typing import List
-# END IMPORT
-
+# End imports
 
 # BEGIN SETUP
 i2c = busio.I2C(SCL, SDA)
 pca = PCA9685.PCA9685(i2c, address=0x28)
 pca.frequency = 280  # Hz
 # END SETUP
+
+# Rospy nodes
+rospy.init_node("motor_listener")
+rate = rospy.Rate(100)
+
 
 
 class MotorCommand():

@@ -18,6 +18,14 @@ Subscribes:
 '''
 
 
+"""
+
+! This is just a test driver function not used in comp
+
+"""
+
+
+
 # BEGIN IMPORT
 import rospy
 from std_msgs.msg import Int32MultiArray

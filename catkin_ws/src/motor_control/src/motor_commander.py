@@ -11,7 +11,7 @@ import adafruit_pca9685 as PCA9685
 
 # BEGIN SETUP
 i2c = busio.I2C(SCL, SDA)
-pca = PCA9685.PCA9685(i2c, address=0x28)
+pca = PCA9685.PCA9685(i2c, address=0x40)
 pca.frequency = 280  # Hz
 # END SETUP
 

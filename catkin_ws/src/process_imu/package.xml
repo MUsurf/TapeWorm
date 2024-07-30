@@ -51,9 +51,9 @@
   <buildtool_depend>catkin</buildtool_depend>
   <!-- The following lines are important to building and must not be commented out
     if this is the only way to fix it you are looking at bigger problems-->
-  <depend>rospy</depend>
+  <!-- <depend>rospy</depend>
   <depend>sensor_msgs</depend>
-  <depend>std_msgs</depend>
+  <depend>std_msgs</depend> -->
 
   <build_export_depend>rospy</build_export_depend>
   <build_export_depend>sensor_msgs</build_export_depend>

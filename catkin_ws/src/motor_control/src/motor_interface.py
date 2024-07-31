@@ -29,6 +29,8 @@ class MotorInterface():
         # info This is the instance of motorcommand that will be used
         self.motor_commander = MotorCommand(
             channels, self.numMotors, step_size, self.minor_time)
+        # info This is the latest command recieved from ros if ros fails to deliver a new value before next execution then the same values are used
+        self.last_directions: List[int] = []
 
     def arm_seq(self) -> None:
         """Current method of arming all motors may change with calibration
@@ -87,13 +89,11 @@ class MotorInterface():
     
 
     def callback(self, message_rec):
-        """Function to subscribe to driver with ros"""
+        """Function to subscribe to driver with ros
+        
+        This is set up in a way to allow ros and the motor controls to function on a async basis. This will make sure nothing locks up
+        and that pid gets very low latency feedback (not really but kinda).
+        """
 
         print("Data received is: " + str(message_rec.data))
-        self.calling_function(message_rec.data)
-        # for index in range(len(message_rec)):
-        #     x = self.__microSec_to_duty(
-        #         message_rec[index])
-
-        #     self.motors[index].duty_cycle = x
-        #     print(f"type of var callback {type(x)}")
+        self.last_directions = message_rec.data

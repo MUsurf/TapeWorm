@@ -213,6 +213,7 @@ class MotorInterface():
 
     def __percent_to_duty(self, percent: int) -> int:
         range: int = abs(self.max_val - self.offset)
+        # If something goes wrong when changing motors to be able to reverse change following line to have a abs value
         duty: int = int(((percent / 100) * range) + self.offset)
         return duty
 

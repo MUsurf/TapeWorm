@@ -11,7 +11,7 @@ container_name=$1
 # Function to check if a screen session exists
 check_screen_session_exists() {
     session_name=$1
-    if docker exec $container_name sudo screen -ls | grep -q "$session_name"; then
+    if docker exec $container_name screen -ls | grep -q "$session_name"; then
         return 0
     else
         return 1
@@ -21,7 +21,7 @@ check_screen_session_exists() {
 # Function to check and log screen session status
 check_screen_status() {
     echo "Checking screen sessions..."
-    docker exec $container_name sudo screen -ls
+    docker exec $container_name screen -ls
     echo "--------------------------"
 }
 

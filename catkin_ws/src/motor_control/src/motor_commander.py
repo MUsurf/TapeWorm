@@ -96,36 +96,16 @@ class MotorCommand():
 
         Notes
         -----
-            This is a rough way to do this and can be reworked
+            Reworked
 
         """
-        directions: List[int] = []
-        for i in range(len(targets)):
-            value: int = (targets[i] - self.pinStates[i])
-            if (value == 0):
-                directions.append(0)
-            elif (value > 0):
-                directions.append(1)
-            elif (value < 0):
-                directions.append(-1)
-            else:
-                raise ValueError
-        return (directions)
+
+        values: List[int] = [target - pinState for target, pinState in zip(targets, self.pinStates)]
+        conversions: List[int] = [int(value / abs(value)) if value != 0 else 0 for value in values] # int cast should only be nessisary for linter
+        return (conversions)
 
     def __set_motors(self, speeds: List[int]) -> None:
         """Sets pins to values given by speed position"""
 
         for index in range(self.motorNum):
             self.set_motor_speed(index, speeds[index])
-
-    # ~ This is a ros function that has not been proven to work
-    def callback(self, message_rec):
-        """Function to subscribe to driver with ros"""
-
-        print("Data received is: " + str(message_rec.data))
-        for index in range(len(message_rec)):
-            x = self.__microSec_to_duty(
-                message_rec[index])
-
-            self.motors[index].duty_cycle = x
-            print(f"type of var callback {type(x)}")

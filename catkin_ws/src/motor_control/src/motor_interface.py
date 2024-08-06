@@ -79,13 +79,35 @@ class MotorInterface():
 
         Notes
         -----
+            directions will be in the form of a list of floats
+                ['x': -1-1, 'y':-1-1, 'z':-1-1, 'pitch':-1-1, 'yaw':-1-1, 'roll':-1-1]
+
             This function is not implemented yet and only contains the translation from percent drive of commands to duty cycle
         """
+        # * if you wish to go to the negative end of this axis the mangintude must also be supplied as a negative
+        # info For multiple instructions to be followed at once the results post array must be added together
+        # info This assumes that all motors are number 1-4 5-8 left to right and horizontal then vertical
+        # ~ This could be used to balance out an under preforming motor
+        motor_to_directions = [
+            [1, 1, -1, -1, 0, 0, 0, 0], # 'x-axis'
+            [1, -1, 1, -1, 0, 0, 0, 0], # 'y-axis'
+            [0, 0, 0, 0, 1, 1, 1, 1], # 'z-axis' 
+            [0, 0, 0, 0, 1, 1, -1, -1], # 'pitch' 
+            [1, -1, -1, 1, 0, 0, 0, 0], # 'yaw' 
+            [0, 0, 0, 0, 1, -1, 1, -1], # 'roll'
+        ]
 
-        drive_in_duty: list[int] = []
-        for p_direction in directions:
-            drive_in_duty.append(self.__percent_to_duty(p_direction))
-        return (drive_in_duty)
+        drive_in_duty = [0 for _ in range(self.numMotors)]
+
+        for index in range(len(directions)):
+            for second_index in  range(len(motor_to_directions[0])):
+                drive_in_duty[second_index] += directions[index] * motor_to_directions[index][second_index]
+
+        drive_to_duty = [self.__percent_to_duty(duty) for duty in drive_in_duty]
+
+        # for p_direction in directions:
+        #     drive_in_duty.append(self.__percent_to_duty(p_direction))
+        return (drive_to_duty)
     
 
     def callback(self, message_rec):

@@ -95,6 +95,7 @@ class MotorInterface():
             [0, 0, 0, 0, 1, 1, -1, -1], # 'pitch' 
             [1, -1, -1, 1, 0, 0, 0, 0], # 'yaw' 
             [0, 0, 0, 0, 1, -1, 1, -1], # 'roll'
+            # Add depth control
         ]
 
         drive_in_duty = [0 for _ in range(self.numMotors)]
@@ -119,3 +120,4 @@ class MotorInterface():
 
         print("Data received is: " + str(message_rec.data))
         self.last_directions = message_rec.data
+        self.calling_function(self.last_directions)

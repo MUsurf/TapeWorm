@@ -1,3 +1,0 @@
-<launch>
-    <node name="imu_node" pkg="process_imu" type="imuNode.py"/>
-</launch>

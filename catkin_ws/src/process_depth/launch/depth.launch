@@ -1,5 +1,0 @@
-<launch>
-    <include file="$(find ms5837)/launch/depth.launch"/>
-
-    <node name="process_depth_node" pkg="process_depth" type="depthNode.py"/>
-</launch>

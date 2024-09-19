@@ -17,7 +17,27 @@ pca.frequency = 280  # Hz
 
 
 class MotorCommand():
-    def __init__(self, local_channels: List[int], num_motors: int, step_size=5, minor_time=.1) -> None:
+    def __init__(self, 
+        local_channels: List[int], 
+        num_motors: int, 
+        step_size: int=5, 
+        minor_time: float=.1) -> None:
+        """_summary_
+
+        _extended_summary_
+
+        Parameters
+        ----------
+        local_channels : List[int]
+            List of channels to be using from i2c splitter
+        num_motors : int
+            Number of motors equal to len of 'local_channels'
+        step_size : int, optional
+            amount to move motors by out of 100, by default 5
+        minor_time : float, optional
+            time between steps for same target, by default .1
+        """
+
         # info Number of motors being managed
         self.motorNum: int = num_motors
 
@@ -53,6 +73,11 @@ class MotorCommand():
         -------
             int
                 int from 65536-0
+
+        Notes
+        -----
+        'microsec' range comes from pca chips desired control frequency
+        
         """
 
         samp_time: float = (1/pca.frequency) * 1000 * \

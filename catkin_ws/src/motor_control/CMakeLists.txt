@@ -165,9 +165,7 @@ include_directories(
 # )
 
 catkin_install_python(PROGRAMS
-  src/motor_commander.py
-  src/motor_interface.py
-  src/motor_listener.py
+  src/master.py
   src/motor_runner.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

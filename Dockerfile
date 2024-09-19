@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y \
 RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 
 # Install pip packages
-RUN python3 -m pip install numpy regex adafruit-blinka
+RUN python3 -m pip install numpy regex adafruit-circuitpython-pca9685 Jetson.GPIO
 
 # Copy the ROS workspace into the container's /root directory
 ARG CACHEBUST=1 

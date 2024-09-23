@@ -100,7 +100,7 @@ class MotorInterface():
 
         drive_in_duty = [0 for _ in range(self.numMotors)]
 
-        # ! Not working need to diagnose later
+        # ! Not working need to diagnose later <values being passed are not of type directions but are instead just motor controlls>
         # for index in range(len(directions)):
         #     for second_index in  range(len(motor_to_directions[0])):
         #         drive_in_duty[second_index] += directions[index] * motor_to_directions[index][second_index]

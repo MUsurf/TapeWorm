@@ -100,9 +100,12 @@ class MotorInterface():
 
         drive_in_duty = [0 for _ in range(self.numMotors)]
 
-        for index in range(len(directions)):
-            for second_index in  range(len(motor_to_directions[0])):
-                drive_in_duty[second_index] += directions[index] * motor_to_directions[index][second_index]
+        # ! Not working need to diagnose later
+        # for index in range(len(directions)):
+        #     for second_index in  range(len(motor_to_directions[0])):
+        #         drive_in_duty[second_index] += directions[index] * motor_to_directions[index][second_index]
+        # ~ Temp fix for above
+        drive_in_duty = directions
 
         drive_to_duty = [self.__percent_to_duty(duty) for duty in drive_in_duty]
 

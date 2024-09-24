@@ -36,25 +36,28 @@ from typing import List
 num_motors = 8
 
 high: List[int] = [20 for i in range(num_motors)]
-low: List[int] = [30 for i in range(num_motors)]
-list_thing = high
+medium: List[int] = [30 for i in range(num_motors)]
+low: List[int] = [40 for i in range(num_motors)]
+list_thing = [high, medium, low]
 
 
 hl_counter = 0
 
 def commander():
     global hl_counter
+    chosen_list = list_thing[0]
     pub = rospy.Publisher('motor_command', Int32MultiArray, queue_size=10)
     rospy.init_node('motor_commander', anonymous=True)
     rate = rospy.Rate(.1) # 10hz
 
     #! This is just a section to show the motors running when there is seperate input from ros this should not be used
     while not rospy.is_shutdown():
+        chosen_list = list_thing[hl_counter]
         if (hl_counter == 0):
             list_thing = high
         else:
             list_thing = low
-        hl_counter = (hl_counter + 1) % 2
+        hl_counter = (hl_counter + 1) % 3
         # hello_str = "hello world %s" % rospy.get_time()
         rospy.loginfo(list_thing)
         pub.publish(data=list_thing)

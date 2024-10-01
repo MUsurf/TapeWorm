@@ -74,6 +74,19 @@ def getPowers(pow, rot, ver):
         pow if rot == 0 else rot
     ]
 
+def getBarrelRoll(power):
+    #I think I'm dumb but maybe you can run all 4? I know this will barrel roll buy maybe p, -p, -p, p will do the barrel roll?
+    return [
+        power,
+        0,
+        0,
+        power,
+        0,
+        0,
+        0,
+        0
+    ]
+
 from typing import List
 
 num_motors = 8
@@ -100,12 +113,10 @@ def commander():
         wantedPower = 0
         wantedRot = 50
         wantedVer = 0
+        #Swap that for the barrel roll function to get a barrel roll :)
         powers = getPowers(wantedPower, wantedRot, wantedVer)
         for i in range(num_motors):
             motor_powers[i] = limiters[i].calculate(powers[i])
-        
-        
-        
         
         rospy.loginfo(motor_powers)
         pub.publish(data=motor_powers)

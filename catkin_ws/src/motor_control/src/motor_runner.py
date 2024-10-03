@@ -50,7 +50,33 @@ class Limiter:
             return value
         else:
             self.lastValue = self.lastValue + direction * (timeElapsed * self.unitsPerSecond)
+            return self.lastValue
             
+class MotorStepper:
+    def __init__(self):
+        self.powers = [0 for i in range(8)]
+        self.currentIndex = 0
+        self.direction = True #Up is true, down is false
+        self.limiters = [Limiter(25) for i in range(8)]
+        self.maxPower = 50
+    def step(self):
+        for i in range(8):
+            if not i == self.currentIndex:
+                self.limiters[i].calculate(0)
+        if self.currentIndex >= 8:
+            return [0 for i in range(8)]
+        elif self.direction:
+            self.powers[self.currentIndex] = self.limiters[self.currentIndex].calculate(self.maxPower)
+            if self.powers[self.currentIndex] == self.maxPower:
+                self.direction = not self.direction
+        else:
+            self.powers[self.currentIndex] = self.limiters[self.currentIndex].calculate(0)
+            if self.powers[self.currentIndex] == 0:
+                self.currentIndex += 1
+                self.direction = not self.direction
+        return self.powers
+    
+    
 def getPowers(pow, rot, ver):
     #I dont remember the diagram that had the powers.
     #This assumes:
@@ -110,6 +136,7 @@ list_thing = high
 
 motor_powers = [0 for i in range(num_motors)]
 
+
 hl_counter = 0
 
 def commander():
@@ -121,15 +148,16 @@ def commander():
     
     limiters = [Limiter(unitsPerSec) for i in range(num_motors)]
     
+    stepper = MotorStepper()
+
+    
     #! This is just a section to show the motors running when there is seperate input from ros this should not be used
     while not rospy.is_shutdown():
-        wantedPower = 0
-        wantedRot = 50
-        wantedVer = 0
+        motor_powers = stepper.step()
         #Swap that for the barrel roll function to get a barrel roll :)
-        powers = getPowers(wantedPower, wantedRot, wantedVer)
-        for i in range(num_motors):
-            motor_powers[i] = limiters[i].calculate(powers[i])
+        #powers = getPowers(wantedPower, wantedRot, wantedVer)
+        #for i in range(num_motors):
+            #motor_powers[i] = limiters[i].calculate(powers[i])
         
         rospy.loginfo(motor_powers)
         pub.publish(data=motor_powers)

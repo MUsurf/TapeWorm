@@ -61,29 +61,42 @@ def getPowers(pow, rot, ver):
     # 7 positive backwards and CCW
     # 8 positive backwards and CW
     
+    """
+    motor_to_directions = [
+            [1, 1, -1, -1, 0, 0, 0, 0], # 'x-axis'
+            [1, -1, 1, -1, 0, 0, 0, 0], # 'y-axis'
+            [0, 0, 0, 0, 1, 1, 1, 1], # 'z-axis' 
+            [0, 0, 0, 0, 1, 1, -1, -1], # 'pitch' 
+            [1, -1, -1, 1, 0, 0, 0, 0], # 'yaw' 
+            [0, 0, 0, 0, 1, -1, 1, -1], # 'roll'
+            # Add depth control
+        ]
+    """
+    
     #If rot != 0, then pow will not be accounted for
     #Clockwise is positive
+    
     return [
-        ver,
-        ver,
-        -ver,
-        -ver,
         pow if rot == 0 else rot,
         -pow if rot == 0 else -rot,
-        -pow if rot == 0 else -rot,
-        pow if rot == 0 else rot
+        pow if rot == 0 else -rot,
+        -pow if rot == 0 else rot,
+        ver,
+        ver,
+        ver,
+        ver
     ]
 
 def getBarrelRoll(power):
     #I think I'm dumb but maybe you can run all 4? I know this will barrel roll buy maybe p, -p, -p, p will do the barrel roll?
     return [
-        power,
-        0,
-        0,
-        power,
         0,
         0,
         0,
+        0,
+        1,
+        0,
+        -1,
         0
     ]
 

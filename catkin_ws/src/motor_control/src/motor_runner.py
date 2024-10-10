@@ -151,6 +151,18 @@ def commander():
         pub.publish(list=temp_movement_direction)
         rate.sleep()
 
+    for x in range(1, 51):
+        for y in range(0, 8):
+            temp_movement_direction[y] = movement_direction[y]*((50-x)/50)
+        rospy.loginfo(temp_movement_direction)
+        pub.publish(list=temp_movement_direction)
+        rate.sleep()
+    
+    temp_movement_direction = [0, 0, 0, 0, 0, 0, 0, 0]
+
+    rospy.loginfo(temp_movement_direction)
+    pub.publish(list=temp_movement_direction)
+
 if __name__ == '__main__':
     try:
         commander()

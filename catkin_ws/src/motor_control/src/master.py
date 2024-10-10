@@ -216,7 +216,7 @@ class MotorInterface():
         #         drive_in_duty[second_index] += directions[index] * motor_to_directions[index][second_index]
 
         drive_in_duty = directions
-        
+
         drive_to_duty = [self.__percent_to_duty(duty) for duty in drive_in_duty]
 
         # for p_direction in directions:

@@ -30,10 +30,11 @@ Subscribes:
 import rospy
 from std_msgs.msg import Int32MultiArray
 import numpy as np
+from typing import List
 # import time
 # END IMPORT
 
-from typing import List
+
 
 num_motors = 8 
 
@@ -44,7 +45,7 @@ array_of_array = np.array(20 for i in range(num_motors))
 
 def commander():
     # global hl_counter
-    chosen_list = list_thing[0]
+    # chosen_list = list_thing[0]
     pub = rospy.Publisher('motor_command', Int32MultiArray, queue_size=10)
     rospy.init_node('motor_commander', anonymous=True)
     rate = rospy.Rate(.1) # 10hz
@@ -69,7 +70,7 @@ def commander():
             jelly_move(scalerx1,scalery1)
         # print(array_of_array)
         # time.sleep(1)
-        pub.publish(data=array_of_array)
+        pub.publish(data=array_of_array.tolist())
         rate.sleep()
 
 def jelly_move(scalerx,scalery):

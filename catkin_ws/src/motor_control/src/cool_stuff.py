@@ -8,20 +8,25 @@ class MotorHandler:
         actual_powers = [0 for i in range(self.num_motors)]
         for i in range(self.num_motors):
             direction = 1 if powers[i] > self.previous_powers[i] else -1
-            actual_powers[i] = powers[i] if abs(powers[i]-self.previous_powers[i]) <= self.step_value else self.previous_powers[i] + self.step_value * direction
+            should_step = not abs(powers[i]-self.previous_powers[i]) <= self.step_value
+            actual_powers[i] = powers[i] if should_step else self.previous_powers[i] + self.step_value * direction
+        
         #Pretend this does stuff :)
+        
         self.previous_powers = actual_powers
         
         return actual_powers
-        
-e = MotorHandler(2, 2)
-print(e.run_motors([8,8]))
-print(e.run_motors([8,8]))
-print(e.run_motors([8,8]))
-print(e.run_motors([8,8]))
-print(e.run_motors([8,8]))
-print(e.run_motors([8,8]))
-print(e.run_motors([8,8]))
-print(e.run_motors([8,8]))
 
+    #Assumes 8 motor setup
+    def run_motors_by_direction(self, power, direction, up_down_power):
+        #Direction is true if forward backwards else left right
+        
+        #Positive is CW, Negative is CCW
+        if self.num_motors == 8:
+            if direction:
+                self.run_motors(power, power, -power, -power, up_down_power, up_down_power, up_down_power, up_down_power)
+            else: 
+                self.run_motors(power, -power, power, -power, up_down_power, up_down_power, up_down_power, up_down_power)
+        else:
+            print("Not 8 motor drive")
         
